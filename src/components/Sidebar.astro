@@ -1,0 +1,91 @@
+---
+import logoMark from '../../yo/Refined Ghandyit Logo with Distinctive Symbol.svg?url';
+
+interface Block {
+  id: string;
+  name: string;
+  color: string;
+  etfs: unknown[];
+}
+
+interface Props {
+  blocks: Block[];
+  blockCount: number;
+  totalEtfCount: number;
+  bestReturn: number;
+  worstReturn: number;
+  ndCount: number;
+}
+
+const { blockCount, totalEtfCount, bestReturn, worstReturn, ndCount } = Astro.props;
+---
+
+<section class="hero">
+  <div class="hero-copy">
+    <div class="brand-lockup">
+      <img class="brand-logo" src={logoMark} alt="Logo de Ghandyit" />
+    </div>
+    <div class="hero-copy-text">
+      <div class="brand-line"><span></span><strong>Ghandyit</strong> · Tecnología con propósito</div>
+      <p class="eyebrow">Panel estratégico</p>
+      <h1>Empieza por un bloque. Busca con precisión.</h1>
+      <p>
+        El panel te guía con calma: entras por tema, reduces el universo y comparas solo lo que importa, sin ruido visual.
+      </p>
+
+      <div class="quick-flow" aria-label="Flujo de uso rápido">
+        <span class="flow-step"><strong>1.</strong> Elige bloque</span>
+        <span class="flow-separator">→</span>
+        <span class="flow-step"><strong>2.</strong> Busca ETF</span>
+        <span class="flow-separator">→</span>
+        <span class="flow-step"><strong>3.</strong> Ordena y compara</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-stats" aria-label="Resumen rápido">
+    <div class="metric accent">
+      <span class="metric-label">ETFs</span>
+      <span class="metric-value">{totalEtfCount}</span>
+      <span class="metric-note">Universo completo listo para explorar.</span>
+    </div>
+
+    <div class="metric success">
+      <span class="metric-label">Mejor 5Y</span>
+      <span class="metric-value">+{bestReturn.toFixed(1)}%</span>
+      <span class="metric-note">El líder del conjunto actual.</span>
+    </div>
+
+    <div class="metric warning">
+      <span class="metric-label">Bloques</span>
+      <span class="metric-value">{blockCount}</span>
+      <span class="metric-note">Bloques temáticos separados para orientar la búsqueda.</span>
+    </div>
+  </div>
+
+  <p class="hero-footnote">Peor 5Y: {worstReturn.toFixed(1)}% · ETFs sin 5Y: {ndCount} · Usa la búsqueda para entrar más rápido.</p>
+</section>
+
+<section class="controls" aria-label="Filtros y ordenación">
+  <div class="controls-grid">
+    <label class="field">
+      <span class="field-label">Buscar ETF</span>
+      <input class="field-control" type="search" id="searchInput" placeholder="Ticker, nombre o bloque" autocomplete="off" />
+    </label>
+
+    <label class="field">
+      <span class="field-label">Ordenar dentro de cada bloque</span>
+      <select class="field-control" id="sortSelect">
+        <option value="return-desc" selected>Rentabilidad 5Y · mayor a menor</option>
+        <option value="return-asc">Rentabilidad 5Y · menor a mayor</option>
+        <option value="ter-asc">TER · menor a mayor</option>
+        <option value="ter-desc">TER · mayor a menor</option>
+        <option value="risk-asc">Riesgo · bajo a alto</option>
+        <option value="risk-desc">Riesgo · alto a bajo</option>
+        <option value="ticker-asc">Ticker · A a Z</option>
+      </select>
+    </label>
+  </div>
+
+  <p class="controls-hint">Usa los bloques como punto de entrada. El orden se aplica dentro de cada bloque visible, no como ranking global único.</p>
+</section>
