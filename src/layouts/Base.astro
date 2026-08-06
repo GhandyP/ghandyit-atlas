@@ -466,6 +466,20 @@ const { title = 'Ghandyit · Ondo tokenized assets' } = Astro.props;
     color: var(--text);
   }
 
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
   @media (max-width: 1080px) {
     .hero {
       grid-template-columns: 1fr;
