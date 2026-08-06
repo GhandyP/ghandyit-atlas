@@ -1,12 +1,16 @@
 {
   "name": "etf-dashboard",
   "version": "1.0.0",
-  "description": "ETF Dashboard - Visión 5 Años",
+  "description": "Ondo tokenized-assets dashboard",
   "type": "module",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "test": "node --test scripts/ondo/catalog-quality.test.mjs scripts/ondo/catalog-filter.test.mjs",
+    "test:browser": "playwright test",
+    "data:validate": "node scripts/ondo/validate.mjs",
+    "data:publication": "node scripts/ondo/check-publication.mjs"
   },
   "keywords": [],
   "author": "",

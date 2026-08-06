@@ -1,0 +1,7 @@
+{"rows":[
+ {"rank":"1","contractAddress":"0x1111111111111111111111111111111111111111","chain":"ethereum","stableId":"fixture-zero","tokenName":"Explicit Zero","symbol":"(ZEROon)","marketCap":"$0.00","holders":"0","website":"https://ondo.finance/"},
+ {"rank":"2","contractAddress":"0x2222222222222222222222222222222222222222","chain":"ethereum","stableId":"fixture-missing","tokenName":"Missing Values","symbol":"(MISSon)","marketCap":"","holders":null,"website":"https://ondo.finance/"},
+ {"rank":"3","contractAddress":"0x3333333333333333333333333333333333333333","chain":"ethereum","stableId":"fixture-malformed","tokenName":"Malformed Values","symbol":"(BADon)","marketCap":"not-money","holders":"not-count","website":"https://ondo.finance/"},
+ {"rank":"4","contractAddress":"0x1234...abcd","tokenName":"Repeated Display","symbol":"(REPAon)","marketCap":"$12.00","holders":"4","website":"https://ondo.finance/"},
+ {"rank":"5","contractAddress":"0x1234...abcd","tokenName":"Repeated Display 2","symbol":"(REPBon)","marketCap":"$0.00","holders":"0","website":"https://ondo.finance/"}
+]}

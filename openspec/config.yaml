@@ -1,0 +1,51 @@
+project:
+  name: ghandyit-atlas
+  root: /home/ghandy/Documents/etf-dashboard
+  description: Static Astro dashboard for Ondo tokenized assets and market intelligence.
+  stack:
+    framework: Astro 6.1.3
+    output: static
+    language: TypeScript and Astro components
+    package_manager: npm
+    data_source: ontonew.md parsed at build time by src/data/ondoAssets.ts
+    styling: Global CSS in src/layouts/Base.astro with component-local styles
+  conventions:
+    page_entry: src/pages/index.astro
+    components: src/components
+    data_modules: src/data
+    user_interface_language: Spanish
+    generated_artifact_language: English
+    preserve_existing_worktree: true
+
+sdd:
+  artifact_store: both
+  execution_mode: interactive
+  delivery_strategy: auto-forecast
+  review_budget_lines: 800
+  strict_tdd: false
+  strict_tdd_reason: No automated test runner, test script, test configuration, or test files were detected. Playwright is installed but not configured for tests.
+  phase_rules:
+    proposal: Define the product problem, assumptions, scope, non-goals, current-data requirements, and decision gaps before implementation.
+    spec: Convert the approved proposal into observable requirements and acceptance scenarios without inventing unsupported data.
+    design: Preserve the static Astro architecture unless evidence from planning requires a different boundary; document data provenance and fallback behavior.
+    tasks: Break work into reviewable slices within the 800-line review budget and include validation steps.
+    apply: Do not mutate unrelated dirty or untracked work; implement only approved tasks.
+    verify: Validate acceptance criteria, build output, data provenance, and static-site behavior; report limitations where automated tests are unavailable.
+    archive: Record final evidence and unresolved follow-ups without committing or publishing.
+
+testing:
+  runner: none-configured
+  test_command: null
+  build_command: npm run build
+  validation_command: npm run build
+  available_test_dependency: Playwright 1.59.1 (installed, not configured)
+  detected_test_files: []
+  notes: The project currently exposes dev, build, and preview scripts only. Treat the production build as the baseline validation command until a test runner is intentionally introduced.
+
+data_research:
+  required_for_analytics_planning: true
+  requested_tool: pwm
+  provider: Perplexity
+  current_data_query_phase: exploration-and-proposal
+  init_status: Authentication verified; no research query executed during initialization.
+  source_policy: Cite current primary or authoritative sources, record retrieval dates, and distinguish observed data from derived analytics and editorial classifications.

@@ -1,0 +1,389 @@
+---
+import { qualityStatesForAsset } from '../data/analytics/catalogQuality.mjs';
+import type { OndoCatalogAsset } from '../data/analytics/catalogAdapter';
+
+interface Props {
+  assets: OndoCatalogAsset[];
+}
+
+const { assets } = Astro.props;
+
+const money = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+
+const number = new Intl.NumberFormat('en-US');
+const safeWebsite = (value: string | null) => {
+  if (!value || !/^https?:\/\//i.test(value)) return null;
+  try { const url = new URL(value); return url.protocol === 'http:' || url.protocol === 'https:' ? value : null; } catch { return null; }
+};
+
+const totalVisible = assets.length;
+const catalogAssetsJson = JSON.stringify(assets).replace(/</g, '\\u003c').replace(/>/g, '\\u003e');
+const moneyValue = (value: number | null) => value === null ? 'N/D' : money.format(value);
+const numberValue = (value: number | null) => value === null ? 'N/D' : number.format(value);
+const rawValue = (value: string | null) => value === null || value.trim() === '' ? 'N/D' : value;
+const identityLabel = (value: OndoCatalogAsset['identityState']) => ({
+  verified: 'Verificada',
+  unresolved: 'Sin resolver',
+  'candidate-display-only': 'Solo candidata para display',
+}[value]);
+const rowStatusLabel = (value: OndoCatalogAsset['rowStatus']) => ({
+  valid: 'Válida',
+  partial: 'Parcial',
+  invalid: 'Inválida',
+  'unresolved-identity': 'Identidad sin resolver',
+  'display-duplicate-unresolved': 'Display duplicado sin resolver',
+}[value]);
+const numericStateLabel = (value: OndoCatalogAsset['marketCapState']) => ({
+  'valid-positive': 'Válido positivo',
+  'valid-zero': 'Cero explícito',
+  missing: 'Ausente',
+  malformed: 'Malformado',
+  unresolved: 'Sin resolver',
+}[value]);
+---
+
+<section class="table-panel" id="ondoTable" data-total-rows={assets.length}>
+  <div class="table-panel__head">
+    <div>
+      <h2 class="table-panel__title">Explora el catálogo Ondo</h2>
+      <p class="table-panel__subtitle">
+        El dashboard está centrado en los campos disponibles en <strong>ontonew.md</strong>: ranking, contrato, market cap, holders y website.
+      </p>
+    </div>
+
+    <div class="table-panel__meta" id="resultSummary" role="status" aria-live="polite" aria-atomic="true">
+      Mostrando {totalVisible} de {totalVisible} activos · Calidad: Todas las filas · Orden: Ranking · ascendente
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <caption class="sr-only">Catálogo de activos Ondo: ranking, contrato, market cap, holders y website.</caption>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Token</th>
+          <th>Contrato</th>
+          <th>Market Cap</th>
+          <th>Holders</th>
+          <th>Website</th>
+          <th>Evidencia</th>
+        </tr>
+      </thead>
+      <tbody data-asset-body>
+        {assets.map((asset) => (
+          <tr
+            data-asset-row
+            data-rank={asset.rank === null ? '' : String(asset.rank)}
+            data-name={asset.tokenName?.toLowerCase() ?? ''}
+            data-symbol={asset.symbol?.toLowerCase() ?? ''}
+            data-contract={asset.contractAddress?.toLowerCase() ?? ''}
+            data-row-key={asset.rawRowKey}
+            data-quality={qualityStatesForAsset(asset).join(' ')}
+            data-identity-state={asset.identityState}
+            data-row-status={asset.rowStatus}
+            data-market-cap={asset.marketCap === null ? '' : String(asset.marketCap)}
+            data-holders={asset.holders === null ? '' : String(asset.holders)}
+            data-website={asset.website?.toLowerCase() ?? ''}
+          >
+            <td data-label="#">
+              <span class="rank-value">{asset.rank ?? 'N/D'}</span>
+            </td>
+
+            <td data-label="Token">
+              <div class="asset-main">
+                <span class="asset-symbol">{asset.symbol ?? 'N/D'}</span>
+                <span class="asset-name">{asset.tokenName ?? 'N/D'}</span>
+              </div>
+            </td>
+
+            <td data-label="Contrato">
+              <code class="contract-value" title={asset.contractAddress ?? undefined}>{asset.contractAddress ?? 'N/D'}</code>
+            </td>
+
+            <td data-label="Market Cap">
+              <span class="market-cap-value">{moneyValue(asset.marketCap)}</span>
+            </td>
+
+            <td data-label="Holders">
+              <span class="holders-value">{numberValue(asset.holders)}</span>
+            </td>
+
+            <td data-label="Website">
+              {safeWebsite(asset.website) ? <a class="website-link" href={safeWebsite(asset.website) ?? undefined} target="_blank" rel="noreferrer">ondo.finance<span class="sr-only"> (se abre en una pestaña nueva)</span></a> : <span>N/D</span>}
+            </td>
+
+            <td data-label="Evidencia">
+              <details class="row-evidence">
+                <summary>Ver evidencia</summary>
+                <div class="row-evidence__body">
+                  <p><strong>Fuente:</strong> ontonew.md · línea {asset.sourceLine} · <strong>As-of:</strong> unknown.</p>
+                  <dl>
+                    <div><dt>Identidad mostrada</dt><dd><code>{rawValue(asset.contractAddress)}</code></dd></div>
+                    <div><dt>Identidad raw</dt><dd><code>{rawValue(asset.contractAddressRaw)}</code></dd></div>
+                    <div><dt>Estado de identidad</dt><dd>{identityLabel(asset.identityState)}{asset.addressIsTruncated ? ' · truncada' : ''}</dd></div>
+                    <div><dt>Estado de fila</dt><dd>{rowStatusLabel(asset.rowStatus)} · <code>{asset.rowStatus}</code></dd></div>
+                    <div><dt>Market cap raw / estado</dt><dd><code>{rawValue(asset.marketCapRaw)}</code> · {numericStateLabel(asset.marketCapState)}</dd></div>
+                    <div><dt>Holders raw / estado</dt><dd><code>{rawValue(asset.holdersRaw)}</code> · {numericStateLabel(asset.holdersState)}</dd></div>
+                  </dl>
+                  {asset.validationErrors.length > 0 ? (
+                    <p><strong>Errores de validación:</strong> <span class="row-evidence__errors">{asset.validationErrors.map((error) => <code>{error}</code>)}</span></p>
+                  ) : <p><strong>Errores de validación:</strong> ninguno registrado.</p>}
+                  {asset.identityState !== 'verified' ? <p class="row-evidence__warning">Identidad sin resolver; no se usa para enriquecimiento.</p> : null}
+                </div>
+              </details>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="empty-state" id="emptyState" hidden>
+    <h3>No hay resultados</h3>
+    <p>Prueba con otro token, símbolo o calidad de fila, o usa «Limpiar filtros».</p>
+  </div>
+
+  <div class="disclaimer">
+    <strong>Aviso legal:</strong> este panel es informativo y educativo. No es asesoramiento financiero ni una recomendación de compra o venta.
+  </div>
+</section>
+
+<script type="application/json" id="catalogAssets" set:html={catalogAssetsJson}></script>
+
+<script>
+  import { applyCatalogFilters } from '../data/analytics/catalogFilter.mjs';
+
+  const state = {
+    searchTerm: '',
+    quality: 'all',
+    sortKey: 'rank-asc',
+  };
+
+  const resultSummary = document.getElementById('resultSummary');
+  const emptyState = document.getElementById('emptyState');
+  const searchInput = document.getElementById('searchInput');
+  const qualitySelect = document.getElementById('qualitySelect');
+  const sortSelect = document.getElementById('sortSelect');
+  const resetButton = document.getElementById('resetCatalogFilters');
+  const table = document.getElementById('ondoTable');
+  const tbody = document.querySelector('[data-asset-body]');
+  const rows = Array.from(document.querySelectorAll('[data-asset-row]'));
+
+  const assets = JSON.parse(document.getElementById('catalogAssets').textContent);
+  const rowByKey = new Map(rows.map((row) => [row.dataset.rowKey, row]));
+  const totalRows = Number.parseInt(table?.dataset.totalRows ?? String(rows.length), 10);
+
+  function updateSummary(visibleCount) {
+    if (!resultSummary) return;
+    const sortLabel = sortSelect?.selectedOptions[0]?.textContent ?? '';
+    const qualityLabel = qualitySelect?.selectedOptions[0]?.textContent ?? '';
+    resultSummary.textContent = `Mostrando ${visibleCount} de ${totalRows} activos · Calidad: ${qualityLabel} · Orden: ${sortLabel}`;
+  }
+
+  function render() {
+    const visible = applyCatalogFilters(assets, {
+      query: state.searchTerm,
+      quality: state.quality,
+      sort: state.sortKey,
+    });
+    const visibleKeys = new Set(visible.map((asset) => asset.rawRowKey));
+
+    visible.forEach((asset) => {
+      const row = rowByKey.get(asset.rawRowKey);
+      if (row) tbody?.appendChild(row);
+    });
+
+    rows.forEach((row) => {
+      row.hidden = !visibleKeys.has(row.dataset.rowKey);
+    });
+
+    if (emptyState) emptyState.hidden = visible.length !== 0;
+    updateSummary(visible.length);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    render();
+
+    searchInput?.addEventListener('input', (event) => {
+      state.searchTerm = (event.target.value || '').toString().trim().toLowerCase();
+      render();
+    });
+
+    sortSelect?.addEventListener('change', (event) => {
+      state.sortKey = event.target.value;
+      render();
+    });
+
+    qualitySelect?.addEventListener('change', (event) => {
+      state.quality = event.target.value;
+      render();
+    });
+
+    resetButton?.addEventListener('click', () => {
+      state.searchTerm = '';
+      state.quality = 'all';
+      state.sortKey = 'rank-asc';
+      if (searchInput) searchInput.value = '';
+      if (qualitySelect) qualitySelect.value = state.quality;
+      if (sortSelect) sortSelect.value = state.sortKey;
+      render();
+      searchInput?.focus();
+    });
+  });
+</script>
+
+<style>
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .asset-main {
+    display: grid;
+    gap: 0.2rem;
+  }
+
+  .asset-symbol {
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  .asset-name {
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.35;
+  }
+
+  .contract-value {
+    display: inline-block;
+    max-width: 18ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 0.35rem 0.55rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--surface-soft) 84%, black);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 0.82rem;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .market-cap-value,
+  .holders-value,
+  .rank-value {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .website-link {
+    color: var(--accent);
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .website-link:hover {
+    text-decoration: underline;
+  }
+
+  .website-link:focus-visible,
+  .row-evidence summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  [data-asset-row]:hover .contract-value {
+    border-color: color-mix(in srgb, var(--accent) 70%, white);
+  }
+
+  .row-evidence {
+    min-width: 11rem;
+  }
+
+  .row-evidence summary {
+    color: var(--accent);
+    cursor: pointer;
+    font-weight: 700;
+  }
+
+  .row-evidence__body {
+    min-width: 19rem;
+    margin-top: 10px;
+    padding: 10px;
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--muted);
+    font-size: 0.8rem;
+    line-height: 1.45;
+  }
+
+  .row-evidence__body p {
+    margin: 0 0 8px;
+  }
+
+  .row-evidence__body p:last-child {
+    margin-bottom: 0;
+  }
+
+  .row-evidence__body dl {
+    display: grid;
+    gap: 6px;
+    margin: 0 0 8px;
+  }
+
+  .row-evidence__body dl div {
+    display: grid;
+    grid-template-columns: minmax(7rem, 0.8fr) minmax(0, 1.2fr);
+    gap: 8px;
+  }
+
+  .row-evidence__body dt {
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  .row-evidence__body dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+    color: var(--text);
+  }
+
+  .row-evidence__body code {
+    color: var(--text);
+    font-size: 0.76rem;
+  }
+
+  .row-evidence__errors {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .row-evidence__errors code {
+    padding: 2px 5px;
+    border-radius: 5px;
+    background: var(--warning-soft);
+    color: var(--warning);
+  }
+
+  .row-evidence__warning {
+    color: var(--warning);
+  }
+</style>

@@ -1,0 +1,92 @@
+    ---
+    interface Group { key: string; label: string; count: number; verified: boolean }
+    interface Props {
+      groups: Group[];
+      activeDimension: 'sector' | 'geography';
+      dimensionOptions: string[];
+      mode: string;
+      quality: Record<string, unknown>;
+    }
+    import ComparisonTable from './ComparisonTable.astro';
+    import { normalizeAssetType } from '../data/analytics/classifications';
+    import { ondoAnalytics } from '../data/ondoAnalytics';
+  const { groups, activeDimension, dimensionOptions, mode, quality } = Astro.props;
+    const isCatalogFallback = mode === 'catalog-fallback';
+    const unknownGroup = groups.find((group) => group.key === 'unknown');
+    const qualityReason = String(quality.reason ?? 'analytics-unavailable');
+    const qualityState = String(quality.state ?? 'unknown');
+    const activeGroup = groups.find((group) => group.count > 0) ?? unknownGroup ?? groups[0];
+    const assets = (Array.isArray(ondoAnalytics.assets) ? ondoAnalytics.assets : []) as Array<Record<string, any>>;
+    const cohort = activeGroup?.key ?? 'unknown';
+    const comparisonRows = isCatalogFallback ? [] : assets.filter((asset) => normalizeAssetType(asset.classification?.assetType) === cohort).slice(0, 12).map((asset) => ({ name: asset.tokenName, symbol: asset.symbol, observed: { marketCap: asset.marketCap, holders: asset.holders } }));
+    const sourceAge = quality.sourceAgeDays == null ? 'N/D' : `${quality.sourceAgeDays} días`;
+    ---
+    <section class="analytics-dashboard" aria-labelledby="analytics-title" data-analytics-mode={mode}>
+      <div class="analytics-dashboard__head">
+        <div>
+          <p class="eyebrow">Análisis por cohortes</p>
+          <h2 id="analytics-title">Compará activos compatibles</h2>
+          <p class="analytics-dashboard__intro">Los bloques separan tipos de activo antes de aplicar sector, geografía o factores.</p>
+        </div>
+        <span class="analytics-status">{isCatalogFallback ? 'Analítica desactivada' : 'Snapshot verificado'}</span>
+      </div>
+      {isCatalogFallback ? (
+        <div class="analytics-unavailable" role="status" aria-live="polite" aria-labelledby="analytics-unavailable-title">
+          <div class="analytics-unavailable__head">
+            <div>
+              <p class="eyebrow">Analítica no disponible</p>
+              <h3 id="analytics-unavailable-title">Este build solo publica el catálogo</h3>
+            </div>
+            <span class="analytics-unavailable__badge">Fallback de catálogo</span>
+          </div>
+          <p class="analytics-unavailable__copy">Los análisis por cohortes, las métricas de proveedores y los puntajes están desactivados porque la identidad de los activos, la fuente de datos y la evidencia de licencia todavía no están verificadas.</p>
+          <p class="analytics-unavailable__copy">Los valores <strong>N/D</strong> no son resultados analíticos. Explorá las filas, la calidad de la fuente y la evidencia disponible en el catálogo.</p>
+          <p class="analytics-unavailable__meta">Estado: <code>{qualityReason}</code> · Snapshot: <code>{ondoAnalytics.snapshotId}</code> · As-of: <strong>unknown</strong>.</p>
+          <a class="analytics-unavailable__link" href="#catalog-quality-title">Ir a calidad y evidencia del catálogo</a>
+        </div>
+      ) : (
+        <>
+          <div class="analytics-blocks" role="tablist" aria-label="Bloques por tipo de activo">
+            {groups.map((group, index) => <button type="button" role="tab" aria-selected={index === 0} class:list={{ active: index === 0 }} data-analytics-group={group.key}><strong>{group.label}</strong><span>{group.count} activos</span></button>)}
+          </div>
+          <div class="analytics-quality" aria-live="polite">
+            <strong>Calidad de datos:</strong> {qualityReason} · Estado: {qualityState}. Sector/industria activo: {activeDimension === 'sector' ? 'sí' : 'no'} · Opciones verificadas: {dimensionOptions.length || 'N/D'}.
+            <span>Generado: {ondoAnalytics.generatedAt ?? 'N/D'} · Catálogo: {ondoAnalytics.catalogSnapshotAt ?? 'N/D'} · Antigüedad de fuente: {sourceAge}.</span>
+            <span>{unknownGroup?.count ?? 0} activos requieren clasificación antes de recibir métricas o score.</span>
+          </div>
+          <ComparisonTable cohort={activeGroup?.label ?? 'Other / Unknown'} snapshotId={ondoAnalytics.snapshotId} rows={comparisonRows} />
+        </>
+      )}
+    </section>
+    <script>
+      const dashboard = document.querySelector('.analytics-dashboard');
+      const status = dashboard?.querySelector('.analytics-quality');
+      dashboard?.querySelectorAll('[data-analytics-group]').forEach((button) => button.addEventListener('click', () => {
+        dashboard.querySelectorAll('[data-analytics-group]').forEach((item) => { item.classList.toggle('active', item === button); item.setAttribute('aria-selected', String(item === button)); });
+        if (status) status.dataset.selectedGroup = button.getAttribute('data-analytics-group') ?? 'unknown';
+      }));
+    </script>
+    <style>
+      .analytics-dashboard { display: grid; gap: 14px; padding: 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; }
+      .analytics-dashboard__head { display: flex; justify-content: space-between; gap: 16px; align-items: end; }
+      .analytics-dashboard__intro, .analytics-quality { color: var(--muted); line-height: 1.55; }
+      .analytics-dashboard__intro { margin-top: 5px; }
+      .analytics-status { color: var(--warning); font-size: .8rem; font-weight: 700; }
+      .analytics-unavailable { display: grid; gap: 12px; padding: 18px; border: 1px solid color-mix(in srgb, var(--warning) 42%, var(--border)); border-radius: 16px; background: color-mix(in srgb, var(--warning-soft) 72%, var(--surface)); }
+      .analytics-unavailable__head { display: flex; justify-content: space-between; gap: 16px; align-items: start; }
+      .analytics-unavailable__badge { flex: 0 0 auto; padding: 7px 10px; color: var(--warning); border: 1px solid color-mix(in srgb, var(--warning) 42%, var(--border)); border-radius: 999px; font-size: .78rem; font-weight: 700; }
+      .analytics-unavailable__copy, .analytics-unavailable__meta { max-width: 76ch; color: var(--muted); line-height: 1.55; }
+      .analytics-unavailable__copy, .analytics-unavailable__meta { margin: 0; }
+      .analytics-unavailable__meta { font-size: .86rem; }
+      .analytics-unavailable__meta code { color: var(--text); }
+      .analytics-unavailable__link { width: fit-content; color: var(--accent); font-weight: 700; }
+      .analytics-blocks { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+      .analytics-blocks button { display: grid; gap: 6px; text-align: left; padding: 12px; color: var(--text); background: var(--surface-soft); border: 1px solid var(--border); border-radius: 12px; }
+      .analytics-blocks button.active, .analytics-blocks button:hover { border-color: var(--accent); }
+      .analytics-blocks span { color: var(--muted); font-size: .82rem; }
+      .analytics-quality { padding: 12px; border: 1px solid var(--border); border-radius: 12px; background: color-mix(in srgb, var(--surface-soft) 82%, black); }
+      .analytics-quality span { display: block; margin-top: 4px; }
+      @media (max-width: 860px) { .analytics-blocks { grid-template-columns: repeat(2, minmax(0, 1fr)); } .analytics-dashboard__head, .analytics-unavailable__head { align-items: start; flex-direction: column; } }
+    </style>
+    
+    

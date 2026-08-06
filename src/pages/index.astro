@@ -1,121 +1,61 @@
 ---
 import Base from '../layouts/Base.astro';
 import Sidebar from '../components/Sidebar.astro';
-import EtfTable from '../components/EtfTable.astro';
-import etfData from '../data/etfs.json';
+import CatalogQuality from '../components/CatalogQuality.astro';
+import OndoTable from '../components/OndoTable.astro';
+import AnalyticsDashboard from '../components/AnalyticsDashboard.astro';
+import { ondoAssets, ondoCatalogQuality, ondoStats } from '../data/ondoAssets';
+import { ondoAnalytics } from '../data/ondoAnalytics';
+import { buildClassificationView } from '../data/analytics/classifications';
 
-const totalEtfCount = etfData.blocks.reduce((sum, block) => sum + block.etfs.length, 0);
-
-const getBrandTone = (name: string) => {
-  const lower = name.toLowerCase();
-
-  if (lower.startsWith('renta fija')) {
-    return {
-      color: '#0a0a0a',
-      soft: 'rgba(10, 10, 10, 0.08)',
-    };
-  }
-
-  if (lower.startsWith('materias primas')) {
-    return {
-      color: '#a83e95',
-      soft: 'rgba(168, 62, 149, 0.10)',
-    };
-  }
-
-  if (lower.startsWith('sectorial')) {
-    return {
-      color: '#9867e3',
-      soft: 'rgba(152, 103, 227, 0.10)',
-    };
-  }
-
-  if (lower.startsWith('dividendos')) {
-    return {
-      color: '#341539',
-      soft: 'rgba(52, 21, 57, 0.10)',
-    };
-  }
-
-  if (lower.startsWith('cripto')) {
-    return {
-      color: '#000000',
-      soft: 'rgba(0, 0, 0, 0.08)',
-    };
-  }
-
-  return {
-    color: '#6344ad',
-    soft: 'rgba(99, 68, 173, 0.10)',
-  };
-};
-
-const blocks = etfData.blocks.map((block) => {
-  const tone = getBrandTone(block.name);
-  const sortedEtfs = [...block.etfs].sort((a, b) => {
-    const aVal = a.return5y ?? -Infinity;
-    const bVal = b.return5y ?? -Infinity;
-    return bVal - aVal;
-  });
-
-  const etfs = sortedEtfs.map((etf) => ({
-    ...etf,
-    blockId: block.id,
-    blockName: block.name,
-    blockColor: tone.color,
-    blockSoft: tone.soft,
-  }));
-
-  const numericReturns = sortedEtfs.map((etf) => etf.return5y).filter((value) => value !== null);
-  const ndCount = sortedEtfs.filter((etf) => etf.return5y === null).length;
-  const best = sortedEtfs.find((etf) => etf.return5y !== null) ?? sortedEtfs[0];
-  const cheapest = [...sortedEtfs].sort((a, b) => a.ter - b.ter)[0];
-
-  return {
-    ...block,
-    brandColor: tone.color,
-    brandSoft: tone.soft,
-    etfs,
-    bestReturn: best?.return5y ?? null,
-    bestTicker: best?.ticker ?? '',
-    cheapestTer: cheapest?.ter ?? null,
-    ndCount,
-    averageReturn: numericReturns.length
-      ? numericReturns.reduce((sum, value) => sum + value, 0) / numericReturns.length
-      : null,
-  };
+const compactMoney = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  notation: 'compact',
+  compactDisplay: 'short',
+  maximumFractionDigits: 1,
 });
 
-const rows = blocks.flatMap((block) =>
-  block.etfs.map((etf) => ({
-    ...etf,
-    blockId: block.id,
-    blockName: block.name,
-    blockColor: block.brandColor,
-    blockSoft: block.brandSoft,
-  })),
-);
+const compactNumber = new Intl.NumberFormat('en-US', {
+  notation: 'compact',
+  compactDisplay: 'short',
+  maximumFractionDigits: 1,
+});
 
-const numericReturns = rows
-  .map((row) => row.return5y)
-  .filter((value) => value !== null);
+const topMarketCapLabel = ondoStats.topMarketCapAsset
+  ? `${ondoStats.topMarketCapAsset.symbol} · ${ondoStats.topMarketCapAsset.tokenName}`
+  : 'N/D';
 
-const bestReturn = numericReturns.length ? Math.max(...numericReturns) : 0;
-const worstReturn = numericReturns.length ? Math.min(...numericReturns) : 0;
-const ndCount = rows.filter((row) => row.return5y === null).length;
+const pageSummary = {
+  assetCount: ondoStats.count,
+  totalMarketCap: ondoStats.totalMarketCap,
+  totalHolders: ondoStats.totalHolders,
+  zeroMarketCapCount: ondoStats.zeroMarketCapCount,
+};
+
+const analyticsView = buildClassificationView(ondoAnalytics.assets as Array<{ classification?: { assetType?: string; sector?: string; geography?: string } }>);
 ---
 
-<Base title="Ghandyit · Dashboard ETF">
+<Base title="Ghandyit · Ondo tokenized assets">
   <div class="app-shell">
     <Sidebar
-      blocks={blocks}
-      blockCount={blocks.length}
-      totalEtfCount={totalEtfCount}
-      bestReturn={bestReturn}
-      worstReturn={worstReturn}
-      ndCount={ndCount}
+      assetCount={pageSummary.assetCount}
+      totalMarketCap={compactMoney.format(pageSummary.totalMarketCap)}
+      topMarketCapLabel={topMarketCapLabel}
+      totalHolders={compactNumber.format(pageSummary.totalHolders)}
+      zeroMarketCapCount={pageSummary.zeroMarketCapCount}
     />
 
-    <EtfTable blocks={blocks} rows={rows} />
+    <CatalogQuality catalog={ondoCatalogQuality} analytics={ondoAnalytics} />
+
+    <AnalyticsDashboard
+      groups={analyticsView.groups}
+      activeDimension={analyticsView.activeDimension}
+      dimensionOptions={analyticsView.dimensionOptions}
+      mode={ondoAnalytics.mode}
+      quality={ondoAnalytics.quality}
+    />
+
+    <OndoTable assets={ondoAssets} />
   </div>
 </Base>

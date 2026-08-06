@@ -1,0 +1,138 @@
+---
+import type { AnalyticsSnapshot, CatalogQuality as CatalogQualityModel } from '../data/analytics/types';
+
+interface Props {
+  catalog: CatalogQualityModel;
+  analytics: Pick<AnalyticsSnapshot, 'mode' | 'snapshotId' | 'generatedAt' | 'catalogSnapshotAt' | 'quality'>;
+}
+
+const { catalog, analytics } = Astro.props;
+const sourceLabel = catalog.state === 'available' ? 'Fuente legible' : catalog.state === 'catalog-source-missing' ? 'Fuente no disponible' : 'Fuente con formato no válido';
+const fallback = analytics.mode === 'catalog-fallback';
+const fallbackReason = typeof analytics.quality.reason === 'string' ? analytics.quality.reason : 'desconocido';
+const count = (value: number) => value.toLocaleString('es-ES');
+---
+
+<section class="catalog-quality" aria-labelledby="catalog-quality-title" data-catalog-state={catalog.state} data-analytics-mode={analytics.mode}>
+  <div class="catalog-quality__head">
+    <div>
+      <p class="eyebrow">Calidad y respaldo</p>
+      <h2 id="catalog-quality-title">Catálogo visible, estado honesto</h2>
+      <p class="catalog-quality__intro">La tabla conserva las filas de la fuente local. Las identidades truncadas y los campos no disponibles no se convierten en datos verificados.</p>
+    </div>
+    <span class="catalog-quality__badge">{fallback ? 'Fallback de catálogo' : 'Snapshot enriquecido'}</span>
+  </div>
+
+  <dl class="catalog-quality__stats">
+    <div><dt>Fuente</dt><dd>{catalog.source}</dd><small>{sourceLabel}</small></div>
+    <div><dt>Filas del catálogo</dt><dd>{count(catalog.rowCount)}</dd><small>Filas retenidas</small></div>
+    <div><dt>Identidades sin resolver</dt><dd>{count(catalog.unresolvedIdentityCount)}</dd><small>No aptas para joins</small></div>
+    <div><dt>Campos sin valor</dt><dd>{count(catalog.unavailableFieldCount)}</dd><small>Market cap u holders</small></div>
+    <div><dt>Campos malformados</dt><dd>{count(catalog.malformedFieldCount)}</dd><small>Conservan su estado</small></div>
+    <div><dt>Filas display duplicadas</dt><dd>{count(catalog.duplicateDisplayRowCount)}</dd><small>{count(catalog.duplicateDisplayGroupCount)} grupo(s) sin resolver</small></div>
+  </dl>
+
+  <div class="catalog-quality__details" aria-live="polite">
+    <p><strong>As-of del catálogo: {catalog.asOf ?? 'unknown'}.</strong> La fuente no contiene una fecha de corte verificable.</p>
+    <p>Snapshot analítico: <strong>{fallback ? 'fallback de catálogo' : 'enriquecido'}</strong> · ID: <code>{analytics.snapshotId}</code> · Motivo: <code>{fallbackReason}</code>.</p>
+    <p>Generado: {analytics.generatedAt ?? 'N/D'} · Catálogo del snapshot: {analytics.catalogSnapshotAt ?? 'N/D'}.</p>
+    <p>Las métricas de proveedor y el score permanecen desactivados hasta verificar fuente, identidad y licencia. No se hacen joins por direcciones truncadas.</p>
+  </div>
+</section>
+
+<style>
+  .catalog-quality {
+    display: grid;
+    gap: 16px;
+    padding: 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+  }
+
+  .catalog-quality__head {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .catalog-quality__intro,
+  .catalog-quality__details {
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  .catalog-quality__intro {
+    max-width: 72ch;
+    margin-top: 5px;
+  }
+
+  .catalog-quality__badge {
+    flex: 0 0 auto;
+    padding: 7px 10px;
+    color: var(--warning);
+    border: 1px solid color-mix(in srgb, var(--warning) 42%, var(--border));
+    border-radius: 999px;
+    font-size: .78rem;
+    font-weight: 700;
+  }
+
+  .catalog-quality__stats {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 8px;
+    margin: 0;
+  }
+
+  .catalog-quality__stats div {
+    min-width: 0;
+    padding: 11px;
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+
+  .catalog-quality__stats dt,
+  .catalog-quality__stats small {
+    color: var(--muted);
+    font-size: .75rem;
+  }
+
+  .catalog-quality__stats dd {
+    margin: 5px 0 2px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  .catalog-quality__stats small {
+    display: block;
+    line-height: 1.35;
+  }
+
+  .catalog-quality__details {
+    display: grid;
+    gap: 4px;
+    padding-top: 4px;
+    border-top: 1px solid var(--border);
+    font-size: .88rem;
+  }
+
+  .catalog-quality__details p {
+    margin: 0;
+  }
+
+  .catalog-quality__details code {
+    color: var(--text);
+  }
+
+  @media (max-width: 960px) {
+    .catalog-quality__stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 640px) {
+    .catalog-quality__head { align-items: start; flex-direction: column; }
+    .catalog-quality__stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+</style>
