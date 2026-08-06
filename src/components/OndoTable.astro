@@ -1,6 +1,7 @@
 ---
 import { qualityStatesForAsset } from '../data/analytics/catalogQuality.mjs';
 import type { OndoCatalogAsset } from '../data/analytics/catalogAdapter';
+import { assetDetailHref } from '../data/analytics/assetSlug.mjs';
 
 interface Props {
   assets: OndoCatalogAsset[];
@@ -97,8 +98,10 @@ const numericStateLabel = (value: OndoCatalogAsset['marketCapState']) => ({
 
             <td data-label="Token">
               <div class="asset-main">
-                <span class="asset-symbol">{asset.symbol ?? 'N/D'}</span>
-                <span class="asset-name">{asset.tokenName ?? 'N/D'}</span>
+                <a class="asset-link" href={assetDetailHref(asset)}>
+                  <span class="asset-symbol">{asset.symbol ?? 'N/D'}</span>
+                  <span class="asset-name">{asset.tokenName ?? 'N/D'}</span>
+                </a>
               </div>
             </td>
 
@@ -119,8 +122,10 @@ const numericStateLabel = (value: OndoCatalogAsset['marketCapState']) => ({
             </td>
 
             <td data-label="Evidencia">
-              <details class="row-evidence">
-                <summary>Ver evidencia</summary>
+              <div class="row-evidence__wrap">
+                <a class="row-evidence__link" href={assetDetailHref(asset)}>Ver detalle<span class="sr-only"> de {asset.symbol ?? 'activo'}</span></a>
+                <details class="row-evidence">
+                  <summary>Ver evidencia</summary>
                 <div class="row-evidence__body">
                   <p><strong>Fuente:</strong> ontonew.md · línea {asset.sourceLine} · <strong>As-of:</strong> unknown.</p>
                   <dl>
@@ -137,6 +142,7 @@ const numericStateLabel = (value: OndoCatalogAsset['marketCapState']) => ({
                   {asset.identityState !== 'verified' ? <p class="row-evidence__warning">Identidad sin resolver; no se usa para enriquecimiento.</p> : null}
                 </div>
               </details>
+              </div>
             </td>
           </tr>
         ))}
@@ -267,6 +273,44 @@ const numericStateLabel = (value: OndoCatalogAsset['marketCapState']) => ({
     color: var(--muted);
     font-size: 0.88rem;
     line-height: 1.35;
+  }
+
+  .asset-link {
+    display: grid;
+    gap: 0.2rem;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .asset-link:hover .asset-symbol,
+  .asset-link:focus-visible .asset-symbol {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .asset-link:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  .row-evidence__wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: start;
+  }
+
+  .row-evidence__link {
+    color: var(--accent);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .row-evidence__link:hover,
+  .row-evidence__link:focus-visible {
+    text-decoration: underline;
+    outline: none;
   }
 
   .contract-value {

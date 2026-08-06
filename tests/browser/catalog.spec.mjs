@@ -141,3 +141,20 @@ test('keyboard reaches every catalog control, reset returns focus, and evidence 
 
   await expect(page.locator('[data-asset-row] .website-link').first()).toContainText('se abre en una pestaña nueva');
 });
+
+test('navigates from a token row to its shareable detail page and back', async ({ page }) => {
+  await openCatalog(page);
+
+  const link = page.locator('[data-asset-row] .asset-link').first();
+  await expect(link).toHaveAttribute('href', /^\/assets\/[a-z0-9-]+\/$/);
+  await link.click();
+
+  await expect(page).toHaveURL(/\/assets\/[a-z0-9-]+\/$/);
+  await expect(page.locator('.asset-detail')).toBeVisible();
+  await expect(page.locator('.asset-detail__head h1')).toBeVisible();
+  await expect(page.locator('.asset-detail')).toContainText('Evidencia y estado');
+  await expect(page.locator('.asset-detail')).toContainText('Contexto del snapshot');
+
+  await page.locator('.asset-detail__back a').click();
+  await expect(page.locator('#ondoTable')).toBeVisible();
+});

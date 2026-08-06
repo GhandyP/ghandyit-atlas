@@ -1,0 +1,111 @@
+---
+import Base from '../../layouts/Base.astro';
+import { ondoAssets } from '../../data/ondoAssets';
+import { ondoAnalytics } from '../../data/ondoAnalytics';
+import { readReleaseHealth } from '../../data/analytics/releaseHealth.mjs';
+import { assetSlug } from '../../data/analytics/assetSlug.mjs';
+
+export function getStaticPaths() {
+  return ondoAssets.map((asset) => {
+    const slug = assetSlug(asset);
+    return { params: { slug }, props: { asset } };
+  });
+}
+
+const { asset } = Astro.props;
+if (!asset) throw new Error('asset-detail: unknown asset');
+
+const releaseHealth = readReleaseHealth();
+
+const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const number = new Intl.NumberFormat('en-US');
+const moneyValue = (v: number | null) => v === null ? 'N/D' : money.format(v);
+const numberValue = (v: number | null) => v === null ? 'N/D' : number.format(v);
+const rawValue = (v: string | null) => v === null || String(v).trim() === '' ? 'N/D' : v;
+
+const safeWebsite = (value: string | null) => {
+  if (!value || !/^https?:\/\//i.test(value)) return null;
+  try { const url = new URL(value); return url.protocol === 'http:' || url.protocol === 'https:' ? value : null; } catch { return null; }
+};
+
+const identityLabel = (v: string) => (({ verified: 'Verificada', unresolved: 'Sin resolver', 'candidate-display-only': 'Solo candidata para display' }) as Record<string, string>)[v] ?? 'Desconocido';
+const rowStatusLabel = (v: string) => (({ valid: 'Válida', partial: 'Parcial', invalid: 'Inválida', 'unresolved-identity': 'Identidad sin resolver', 'display-duplicate-unresolved': 'Display duplicado sin resolver' }) as Record<string, string>)[v] ?? v;
+const numericLabel = (v: string) => (({ 'valid-positive': 'Válido positivo', 'valid-zero': 'Cero explícito', missing: 'Ausente', malformed: 'Malformado', unresolved: 'Sin resolver' }) as Record<string, string>)[v] ?? 'Desconocido';
+
+const snapshotKind = ondoAnalytics.mode === 'catalog' ? 'catálogo versionado (sin proveedores)' : ondoAnalytics.mode === 'catalog-fallback' ? 'fallback de catálogo' : 'enriquecido';
+const title = `${asset.symbol ?? 'Activo'} · Detalle del catálogo`;
+---
+
+<Base title={`Ghandyit · ${title}`}>
+  <div class="app-shell asset-detail-shell">
+    <div class="asset-detail">
+      <nav class="asset-detail__back" aria-label="Breadcrumb">
+        <a href="/">&larr; Volver al catálogo</a>
+      </nav>
+
+      <header class="asset-detail__head">
+        <div>
+          <p class="eyebrow">Detalle del activo · <code>{releaseHealth.current.snapshotId ?? 'sin snapshot'}</code></p>
+          <h1>{asset.tokenName ?? 'N/D'}</h1>
+          <p class="asset-detail__sub">Símbolo <strong>{asset.symbol ?? 'N/D'}</strong> · Ranking <strong>{asset.rank ?? 'N/D'}</strong></p>
+        </div>
+        <span class="asset-detail__badge" data-row-status={asset.rowStatus}>{rowStatusLabel(asset.rowStatus)}</span>
+      </header>
+
+      <section class="asset-detail__section" aria-labelledby="asset-evidence-title">
+        <h2 id="asset-evidence-title">Evidencia y estado</h2>
+        <dl class="asset-detail__grid">
+          <div><dt>Fuente</dt><dd>ontonew.md · línea {asset.sourceLine}</dd><small>As-of: unknown · sin fecha de corte verificable.</small></div>
+          <div><dt>Identidad mostrada</dt><dd><code>{rawValue(asset.contractAddress)}</code></dd><small>Display-only; no se usa para joins.</small></div>
+          <div><dt>Identidad raw</dt><dd><code>{rawValue(asset.contractAddressRaw)}</code>{asset.addressIsTruncated ? ' · truncada' : ''}</dd></div>
+          <div><dt>Estado de identidad</dt><dd>{identityLabel(asset.identityState)}{asset.addressIsTruncated ? ' · dirección truncada' : ''}</dd></div>
+          <div><dt>Clave canónica</dt><dd><code>{rawValue(asset.canonicalKey)}</code></dd><small>Sin autoridad de identidad confirmada.</small></div>
+          <div><dt>Market cap</dt><dd>{moneyValue(asset.marketCap)}</dd><small>Raw: <code>{rawValue(asset.marketCapRaw)}</code> · {numericLabel(asset.marketCapState)}</small></div>
+          <div><dt>Holders</dt><dd>{numberValue(asset.holders)}</dd><small>Raw: <code>{rawValue(asset.holdersRaw)}</code> · {numericLabel(asset.holdersState)}</small></div>
+          <div><dt>Website</dt><dd>{safeWebsite(asset.website) ? <a href={safeWebsite(asset.website) ?? undefined} target="_blank" rel="noreferrer">{new URL(safeWebsite(asset.website) ?? 'https://').hostname}<span class="sr-only"> (se abre en una pestaña nueva)</span></a> : 'N/D'}</dd></div>
+          <div><dt>Estado de fila</dt><dd>{rowStatusLabel(asset.rowStatus)} · <code>{asset.rowStatus}</code></dd></div>
+        </dl>
+
+        {asset.validationErrors.length > 0 ? (
+          <p><strong>Errores de validación:</strong> <span class="asset-detail__errors">{asset.validationErrors.map((error) => <code>{error}</code>)}</span></p>
+        ) : <p><strong>Errores de validación:</strong> ninguno registrado.</p>}
+
+        {asset.identityState !== 'verified' ? (
+          <p class="asset-detail__warning">Identidad sin resolver ({identityLabel(asset.identityState)}). No se enriquece con métricas de proveedor ni se hacen joins por direcciones truncadas.</p>
+        ) : null}
+      </section>
+
+      <section class="asset-detail__section" aria-labelledby="snapshot-title">
+        <h2 id="snapshot-title">Contexto del snapshot</h2>
+        <p>Este detalle corresponde al <strong>{snapshotKind}</strong> con ID <code>{ondoAnalytics.snapshotId}</code>, generado {ondoAnalytics.generatedAt ?? 'N/D'} · catálogo del snapshot {ondoAnalytics.catalogSnapshotAt ?? 'N/D'}. La tabla principal comparte el mismo snapshot.</p>
+        <p>Métricas de proveedor y score permanecen desactivados; cadencia de refresco no prometida.</p>
+      </section>
+
+      <div class="disclaimer">
+        <strong>Aviso legal:</strong> este detalle es informativo y educativo. No es asesoramiento financiero ni una recomendación de compra o venta.
+      </div>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .asset-detail-shell { max-width: 960px; }
+  .asset-detail { padding: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; }
+  .asset-detail__back a { color: var(--accent); font-weight: 600; text-decoration: none; }
+  .asset-detail__back a:hover { text-decoration: underline; }
+  .asset-detail__head { display: flex; justify-content: space-between; align-items: start; gap: 16px; }
+  .asset-detail__badge { background: var(--surface-soft); border: 1px solid var(--border); border-radius: 999px; padding: 4px 12px; font-size: 0.8rem; }
+  .asset-detail__section { margin-top: 20px; }
+  .asset-detail__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .asset-detail__grid div { padding: 12px 14px; background: var(--surface-soft); border: 1px solid var(--border); border-radius: 12px; }
+  .asset-detail__grid dt { color: var(--muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; }
+  .asset-detail__grid dd { margin: 4px 0 0; color: var(--text); font-size: 0.95rem; word-break: break-word; }
+  .asset-detail__grid small { color: var(--muted); display: block; margin-top: 6px; }
+  .asset-detail__warning { color: #92600a; background: rgba(255, 193, 7, 0.12); border: 1px solid rgba(255, 193, 7, 0.4); padding: 10px 12px; border-radius: 12px; }
+  .asset-detail__errors code { background: var(--surface-soft); padding: 0 4px; border-radius: 4px; }
+
+  @media (max-width: 640px) {
+    .asset-detail__head { flex-direction: column; }
+    .asset-detail { padding: 12px; }
+  }
+</style>
