@@ -8,8 +8,12 @@ interface Props {
 
 const { catalog, analytics } = Astro.props;
 const sourceLabel = catalog.state === 'available' ? 'Fuente legible' : catalog.state === 'catalog-source-missing' ? 'Fuente no disponible' : 'Fuente con formato no válido';
-const fallback = analytics.mode === 'catalog-fallback';
-const fallbackReason = typeof analytics.quality.reason === 'string' ? analytics.quality.reason : 'desconocido';
+const mode = analytics.mode;
+const isFallback = mode === 'catalog-fallback';
+const isCatalog = mode === 'catalog';
+const snapshotKind = isFallback ? 'fallback de catálogo' : isCatalog ? 'catálogo versionado (sin proveedores)' : 'enriquecido';
+const snapshotBadge = isFallback ? 'Fallback de catálogo' : isCatalog ? 'Catálogo versionado' : 'Snapshot verificado';
+const statusReason = isFallback ? String(typeof analytics.quality.reason === 'string' ? analytics.quality.reason : 'desconocido') : isCatalog ? 'catalog-only: sin fuente verificada' : 'fuente y licencia verificadas';
 const count = (value: number) => value.toLocaleString('es-ES');
 ---
 
@@ -20,7 +24,7 @@ const count = (value: number) => value.toLocaleString('es-ES');
       <h2 id="catalog-quality-title">Catálogo visible, estado honesto</h2>
       <p class="catalog-quality__intro">La tabla conserva las filas de la fuente local. Las identidades truncadas y los campos no disponibles no se convierten en datos verificados.</p>
     </div>
-    <span class="catalog-quality__badge">{fallback ? 'Fallback de catálogo' : 'Snapshot enriquecido'}</span>
+    <span class="catalog-quality__badge" data-snapshot-kind={mode}>{snapshotBadge}</span>
   </div>
 
   <dl class="catalog-quality__stats">
@@ -34,7 +38,7 @@ const count = (value: number) => value.toLocaleString('es-ES');
 
   <div class="catalog-quality__details" aria-live="polite">
     <p><strong>As-of del catálogo: {catalog.asOf ?? 'unknown'}.</strong> La fuente no contiene una fecha de corte verificable.</p>
-    <p>Snapshot analítico: <strong>{fallback ? 'fallback de catálogo' : 'enriquecido'}</strong> · ID: <code>{analytics.snapshotId}</code> · Motivo: <code>{fallbackReason}</code>.</p>
+    <p>Snapshot analítico: <strong>{snapshotKind}</strong> · ID: <code>{analytics.snapshotId}</code> · Estado: <code>{statusReason}</code>.</p>
     <p>Generado: {analytics.generatedAt ?? 'N/D'} · Catálogo del snapshot: {analytics.catalogSnapshotAt ?? 'N/D'}.</p>
     <p>Las métricas de proveedor y el score permanecen desactivados hasta verificar fuente, identidad y licencia. No se hacen joins por direcciones truncadas.</p>
   </div>

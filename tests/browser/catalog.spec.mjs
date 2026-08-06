@@ -33,6 +33,8 @@ test('loads the catalog fallback and retains all rows', async ({ page }) => {
   await openCatalog(page);
 
   await expect(page.locator('.catalog-quality')).toBeVisible();
+  await expect(page.locator('.catalog-quality__badge')).toHaveText(/Fallback de catálogo|Catálogo versionado/);
+  await expect(page.locator('.catalog-quality__details')).not.toContainText('enriquecido');
   await expect(page.locator('.analytics-dashboard[data-analytics-mode="catalog-fallback"], .analytics-dashboard[data-analytics-mode="catalog"]')).toBeVisible();
   await expect(page.locator('.analytics-unavailable')).toContainText('métricas de proveedores');
   await expect(page.locator('.analytics-unavailable')).toContainText('evidencia de licencia');
