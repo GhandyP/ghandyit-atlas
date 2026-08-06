@@ -20,9 +20,15 @@ assert.equal(parsed[2].rowStatus, 'partial'); assert.ok(parsed[2].validationErro
 assert.equal(parsed[3].identityState, 'unresolved'); assert.equal(parsed[3].canonicalKey, null); assert.equal(parsed[3].rowStatus, 'display-duplicate-unresolved'); assert.ok(parsed.every((row) => !('enrichment' in row)));
 assert.equal((await import('../../src/data/analytics/catalogParser.mjs')).parseCatalogRows([{ rank: 'NaN', contractAddress: '0x4444444444444444444444444444444444444444', chain: 'ethereum', stableId: 'rank-test', marketCap: '1', holders: '1' }])[0].rank, null);
 const manifest = JSON.parse(readFileSync(option('--manifest', 'data/ondo/verification/manifest.json'), 'utf8'));
-assert.ok(manifest.length && manifest.every((source) => source.verificationStatus !== 'passed'));
-assert.throws(() => getVerifiedSource(manifest[0].sourceId), (error) => error.code === 'source-not-verified');
-const complete = { ...manifest[0], verificationStatus: 'passed', response: { ...manifest[0].response, httpStatus: 200, responseFixturePath: 'fixtures/README.md' }, coverage: { ...manifest[0].coverage, fullAddress: 'all' }, semantics: { ...manifest[0].semantics, seriesIdentity: 'token' }, licensing: { ...manifest[0].licensing, redistributionPermission: 'approved', staticArtifactPermission: 'approved' }, verification: { fixtureReplayable: true, blockers: [] } };
+const pending = manifest.filter((source) => source.verificationStatus !== 'passed');
+const approved = manifest.filter((source) => source.verificationStatus === 'passed');
+// Raw catalog providers must stay pending; the only approved source is the
+// personal-use Perplexity classification source.
+assert.ok(pending.length && pending.every((source) => source.verificationStatus !== 'passed'));
+for (const source of approved) assert.equal(source.sourceId, 'perplexity-classification');
+assert.throws(() => getVerifiedSource(pending[0].sourceId), (error) => error.code === 'source-not-verified');
+if (approved.length) { const verified = getVerifiedSource('perplexity-classification'); assert.equal(verified.verificationStatus, 'passed'); }
+const complete = { ...(approved[0] ?? manifest[0]), verificationStatus: 'passed', response: { ...manifest[0].response, httpStatus: 200, responseFixturePath: 'fixtures/README.md' }, coverage: { ...manifest[0].coverage, fullAddress: 'all' }, semantics: { ...manifest[0].semantics, seriesIdentity: 'token' }, licensing: { ...manifest[0].licensing, redistributionPermission: 'approved', staticArtifactPermission: 'approved' }, verification: { fixtureReplayable: true, blockers: [] } };
 complete.response.responseSha256 = fixtureSha256(complete);
 assert.equal(gateSource(complete).sourceId, complete.sourceId);
 assert.throws(() => gateSource({ ...complete, response: { ...complete.response, responseSha256: '0'.repeat(64) } }), (error) => error.code === 'source-not-verified');

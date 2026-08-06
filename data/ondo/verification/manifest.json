@@ -1,7 +1,448 @@
 [
-  {"sourceId":"ondo-available-assets","provider":"ondo","kind":"catalog","documentationUrl":"https://docs.ondo.finance/ondo-global-markets/available-assets","exactUrl":"https://docs.ondo.finance/ondo-global-markets/available-assets","apiVersion":"unverified","verificationStatus":"pending","retrievedAt":null,"request":{"method":"GET","exactUrl":"https://docs.ondo.finance/ondo-global-markets/available-assets","query":{},"bodyHash":null,"headersRedacted":{},"auth":{"mode":"unknown","secretEnvName":null,"scopes":[]}},"response":{"httpStatus":null,"contentType":null,"responseFixturePath":null,"responseSha256":null,"redactionPolicy":"pending"},"pagination":{"mode":"unknown","requestParameter":null,"responseField":null,"observedPageSize":null,"documentedMaximumPageSize":null,"maximumPagesTested":null},"rateLimit":{"documentedLimit":null,"observedHeaders":{},"retryAfterHeader":null,"retryableStatuses":[],"maxAttempts":0},"coverage":{"chains":[],"fullAddress":"unknown","stableId":"unknown","addressFieldPath":null,"stableIdFieldPath":null},"semantics":{"temporal":"unknown","seriesIdentity":"unknown","fieldDefinitions":[],"historical":{},"fundamentals":{}},"failureBehavior":{"publicationAction":"fail-closed","invalidResponseAction":"block"},"licensing":{"termsUrl":"https://docs.ondo.finance/","redistributionPermission":"pending","staticArtifactPermission":"pending"},"verification":{"fixtureReplayable":false,"blockers":["unverified endpoint and licensing"]}},
-  {"sourceId":"ondo-metadata-all","provider":"ondo","kind":"metadata","documentationUrl":"https://docs.ondo.finance/api-reference/assets/get-metadata-for-all-supported-assets","exactUrl":"https://docs.ondo.finance/api-reference/assets/get-metadata-for-all-supported-assets","apiVersion":"unverified","verificationStatus":"pending","retrievedAt":null,"request":{"method":"GET","exactUrl":"https://docs.ondo.finance/api-reference/assets/get-metadata-for-all-supported-assets","query":{},"bodyHash":null,"headersRedacted":{},"auth":{"mode":"unknown","secretEnvName":null,"scopes":[]}},"response":{"httpStatus":null,"contentType":null,"responseFixturePath":null,"responseSha256":null,"redactionPolicy":"pending"},"pagination":{"mode":"unknown","requestParameter":null,"responseField":null,"observedPageSize":null,"documentedMaximumPageSize":null,"maximumPagesTested":null},"rateLimit":{"documentedLimit":null,"observedHeaders":{},"retryAfterHeader":null,"retryableStatuses":[],"maxAttempts":0},"coverage":{"chains":[],"fullAddress":"unknown","stableId":"unknown","addressFieldPath":null,"stableIdFieldPath":null},"semantics":{"temporal":"unknown","seriesIdentity":"unknown","fieldDefinitions":[],"historical":{},"fundamentals":{}},"failureBehavior":{"publicationAction":"fail-closed","invalidResponseAction":"block"},"licensing":{"termsUrl":"https://docs.ondo.finance/","redistributionPermission":"pending","staticArtifactPermission":"pending"},"verification":{"fixtureReplayable":false,"blockers":["unverified response, identity, semantics, and licensing"]}},
-  {"sourceId":"ondo-price-volume-all","provider":"ondo","kind":"market","documentationUrl":"https://docs.ondo.finance/api-reference/tickers/get-price-and-volume-data-for-all-supported-tickers","exactUrl":"https://docs.ondo.finance/api-reference/tickers/get-price-and-volume-data-for-all-supported-tickers","apiVersion":"unverified","verificationStatus":"pending","retrievedAt":null,"request":{"method":"GET","exactUrl":"https://docs.ondo.finance/api-reference/tickers/get-price-and-volume-data-for-all-supported-tickers","query":{},"bodyHash":null,"headersRedacted":{},"auth":{"mode":"unknown","secretEnvName":null,"scopes":[]}},"response":{"httpStatus":null,"contentType":null,"responseFixturePath":null,"responseSha256":null,"redactionPolicy":"pending"},"pagination":{"mode":"unknown","requestParameter":null,"responseField":null,"observedPageSize":null,"documentedMaximumPageSize":null,"maximumPagesTested":null},"rateLimit":{"documentedLimit":null,"observedHeaders":{},"retryAfterHeader":null,"retryableStatuses":[],"maxAttempts":0},"coverage":{"chains":[],"fullAddress":"unknown","stableId":"unknown","addressFieldPath":null,"stableIdFieldPath":null},"semantics":{"temporal":"unknown","seriesIdentity":"unknown","fieldDefinitions":[],"historical":{},"fundamentals":{}},"failureBehavior":{"publicationAction":"fail-closed","invalidResponseAction":"block"},"licensing":{"termsUrl":"https://docs.ondo.finance/","redistributionPermission":"pending","staticArtifactPermission":"pending"},"verification":{"fixtureReplayable":false,"blockers":["token versus underlying semantics unverified"]}},
-  {"sourceId":"ondo-api-overview","provider":"ondo","kind":"cross-check","documentationUrl":"https://docs.ondo.finance/api-reference/overview","exactUrl":"https://docs.ondo.finance/api-reference/overview","apiVersion":"unverified","verificationStatus":"pending","retrievedAt":null,"request":{"method":"GET","exactUrl":"https://docs.ondo.finance/api-reference/overview","query":{},"bodyHash":null,"headersRedacted":{},"auth":{"mode":"unknown","secretEnvName":null,"scopes":[]}},"response":{"httpStatus":null,"contentType":null,"responseFixturePath":null,"responseSha256":null,"redactionPolicy":"pending"},"pagination":{"mode":"unknown","requestParameter":null,"responseField":null,"observedPageSize":null,"documentedMaximumPageSize":null,"maximumPagesTested":null},"rateLimit":{"documentedLimit":null,"observedHeaders":{},"retryAfterHeader":null,"retryableStatuses":[],"maxAttempts":0},"coverage":{"chains":[],"fullAddress":"unknown","stableId":"unknown","addressFieldPath":null,"stableIdFieldPath":null},"semantics":{"temporal":"unknown","seriesIdentity":"unknown","fieldDefinitions":[],"historical":{},"fundamentals":{}},"failureBehavior":{"publicationAction":"fail-closed","invalidResponseAction":"block"},"licensing":{"termsUrl":"https://docs.ondo.finance/api-reference/overview","redistributionPermission":"pending","staticArtifactPermission":"pending"},"verification":{"fixtureReplayable":false,"blockers":["API limits, errors, and redistribution unverified"]}},
-  {"sourceId":"dia-ondo-cross-check","provider":"dia","kind":"cross-check","documentationUrl":"https://www.diadata.org/","exactUrl":"https://www.diadata.org/app/price/asset/Ethereum/0xfAbA6f8e4a5E8Ab82F62fe7C39859FA577269BE3/","apiVersion":"unverified","verificationStatus":"pending","retrievedAt":null,"request":{"method":"GET","exactUrl":"https://www.diadata.org/app/price/asset/Ethereum/0xfAbA6f8e4a5E8Ab82F62fe7C39859FA577269BE3/","query":{},"bodyHash":null,"headersRedacted":{},"auth":{"mode":"unknown","secretEnvName":null,"scopes":[]}},"response":{"httpStatus":null,"contentType":null,"responseFixturePath":null,"responseSha256":null,"redactionPolicy":"pending"},"pagination":{"mode":"unknown","requestParameter":null,"responseField":null,"observedPageSize":null,"documentedMaximumPageSize":null,"maximumPagesTested":null},"rateLimit":{"documentedLimit":null,"observedHeaders":{},"retryAfterHeader":null,"retryableStatuses":[],"maxAttempts":0},"coverage":{"chains":["Ethereum"],"fullAddress":"unknown","stableId":"unknown","addressFieldPath":null,"stableIdFieldPath":null},"semantics":{"temporal":"unknown","seriesIdentity":"unknown","fieldDefinitions":[],"historical":{},"fundamentals":{}},"failureBehavior":{"publicationAction":"fail-closed","invalidResponseAction":"block"},"licensing":{"termsUrl":"https://www.diadata.org/","redistributionPermission":"pending","staticArtifactPermission":"pending"},"verification":{"fixtureReplayable":false,"blockers":["identity reconciliation and redistribution unverified"]}}
+  {
+    "sourceId": "ondo-available-assets",
+    "provider": "ondo",
+    "kind": "catalog",
+    "documentationUrl": "https://docs.ondo.finance/ondo-global-markets/available-assets",
+    "exactUrl": "https://docs.ondo.finance/ondo-global-markets/available-assets",
+    "apiVersion": "unverified",
+    "verificationStatus": "pending",
+    "retrievedAt": null,
+    "request": {
+      "method": "GET",
+      "exactUrl": "https://docs.ondo.finance/ondo-global-markets/available-assets",
+      "query": {},
+      "bodyHash": null,
+      "headersRedacted": {},
+      "auth": {
+        "mode": "unknown",
+        "secretEnvName": null,
+        "scopes": []
+      }
+    },
+    "response": {
+      "httpStatus": null,
+      "contentType": null,
+      "responseFixturePath": null,
+      "responseSha256": null,
+      "redactionPolicy": "pending"
+    },
+    "pagination": {
+      "mode": "unknown",
+      "requestParameter": null,
+      "responseField": null,
+      "observedPageSize": null,
+      "documentedMaximumPageSize": null,
+      "maximumPagesTested": null
+    },
+    "rateLimit": {
+      "documentedLimit": null,
+      "observedHeaders": {},
+      "retryAfterHeader": null,
+      "retryableStatuses": [],
+      "maxAttempts": 0
+    },
+    "coverage": {
+      "chains": [],
+      "fullAddress": "unknown",
+      "stableId": "unknown",
+      "addressFieldPath": null,
+      "stableIdFieldPath": null
+    },
+    "semantics": {
+      "temporal": "unknown",
+      "seriesIdentity": "unknown",
+      "fieldDefinitions": [],
+      "historical": {},
+      "fundamentals": {}
+    },
+    "failureBehavior": {
+      "publicationAction": "fail-closed",
+      "invalidResponseAction": "block"
+    },
+    "licensing": {
+      "termsUrl": "https://docs.ondo.finance/",
+      "redistributionPermission": "pending",
+      "staticArtifactPermission": "pending"
+    },
+    "verification": {
+      "fixtureReplayable": false,
+      "blockers": [
+        "unverified endpoint and licensing"
+      ]
+    }
+  },
+  {
+    "sourceId": "ondo-metadata-all",
+    "provider": "ondo",
+    "kind": "metadata",
+    "documentationUrl": "https://docs.ondo.finance/api-reference/assets/get-metadata-for-all-supported-assets",
+    "exactUrl": "https://docs.ondo.finance/api-reference/assets/get-metadata-for-all-supported-assets",
+    "apiVersion": "unverified",
+    "verificationStatus": "pending",
+    "retrievedAt": null,
+    "request": {
+      "method": "GET",
+      "exactUrl": "https://docs.ondo.finance/api-reference/assets/get-metadata-for-all-supported-assets",
+      "query": {},
+      "bodyHash": null,
+      "headersRedacted": {},
+      "auth": {
+        "mode": "unknown",
+        "secretEnvName": null,
+        "scopes": []
+      }
+    },
+    "response": {
+      "httpStatus": null,
+      "contentType": null,
+      "responseFixturePath": null,
+      "responseSha256": null,
+      "redactionPolicy": "pending"
+    },
+    "pagination": {
+      "mode": "unknown",
+      "requestParameter": null,
+      "responseField": null,
+      "observedPageSize": null,
+      "documentedMaximumPageSize": null,
+      "maximumPagesTested": null
+    },
+    "rateLimit": {
+      "documentedLimit": null,
+      "observedHeaders": {},
+      "retryAfterHeader": null,
+      "retryableStatuses": [],
+      "maxAttempts": 0
+    },
+    "coverage": {
+      "chains": [],
+      "fullAddress": "unknown",
+      "stableId": "unknown",
+      "addressFieldPath": null,
+      "stableIdFieldPath": null
+    },
+    "semantics": {
+      "temporal": "unknown",
+      "seriesIdentity": "unknown",
+      "fieldDefinitions": [],
+      "historical": {},
+      "fundamentals": {}
+    },
+    "failureBehavior": {
+      "publicationAction": "fail-closed",
+      "invalidResponseAction": "block"
+    },
+    "licensing": {
+      "termsUrl": "https://docs.ondo.finance/",
+      "redistributionPermission": "pending",
+      "staticArtifactPermission": "pending"
+    },
+    "verification": {
+      "fixtureReplayable": false,
+      "blockers": [
+        "unverified response, identity, semantics, and licensing"
+      ]
+    }
+  },
+  {
+    "sourceId": "ondo-price-volume-all",
+    "provider": "ondo",
+    "kind": "market",
+    "documentationUrl": "https://docs.ondo.finance/api-reference/tickers/get-price-and-volume-data-for-all-supported-tickers",
+    "exactUrl": "https://docs.ondo.finance/api-reference/tickers/get-price-and-volume-data-for-all-supported-tickers",
+    "apiVersion": "unverified",
+    "verificationStatus": "pending",
+    "retrievedAt": null,
+    "request": {
+      "method": "GET",
+      "exactUrl": "https://docs.ondo.finance/api-reference/tickers/get-price-and-volume-data-for-all-supported-tickers",
+      "query": {},
+      "bodyHash": null,
+      "headersRedacted": {},
+      "auth": {
+        "mode": "unknown",
+        "secretEnvName": null,
+        "scopes": []
+      }
+    },
+    "response": {
+      "httpStatus": null,
+      "contentType": null,
+      "responseFixturePath": null,
+      "responseSha256": null,
+      "redactionPolicy": "pending"
+    },
+    "pagination": {
+      "mode": "unknown",
+      "requestParameter": null,
+      "responseField": null,
+      "observedPageSize": null,
+      "documentedMaximumPageSize": null,
+      "maximumPagesTested": null
+    },
+    "rateLimit": {
+      "documentedLimit": null,
+      "observedHeaders": {},
+      "retryAfterHeader": null,
+      "retryableStatuses": [],
+      "maxAttempts": 0
+    },
+    "coverage": {
+      "chains": [],
+      "fullAddress": "unknown",
+      "stableId": "unknown",
+      "addressFieldPath": null,
+      "stableIdFieldPath": null
+    },
+    "semantics": {
+      "temporal": "unknown",
+      "seriesIdentity": "unknown",
+      "fieldDefinitions": [],
+      "historical": {},
+      "fundamentals": {}
+    },
+    "failureBehavior": {
+      "publicationAction": "fail-closed",
+      "invalidResponseAction": "block"
+    },
+    "licensing": {
+      "termsUrl": "https://docs.ondo.finance/",
+      "redistributionPermission": "pending",
+      "staticArtifactPermission": "pending"
+    },
+    "verification": {
+      "fixtureReplayable": false,
+      "blockers": [
+        "token versus underlying semantics unverified"
+      ]
+    }
+  },
+  {
+    "sourceId": "ondo-api-overview",
+    "provider": "ondo",
+    "kind": "cross-check",
+    "documentationUrl": "https://docs.ondo.finance/api-reference/overview",
+    "exactUrl": "https://docs.ondo.finance/api-reference/overview",
+    "apiVersion": "unverified",
+    "verificationStatus": "pending",
+    "retrievedAt": null,
+    "request": {
+      "method": "GET",
+      "exactUrl": "https://docs.ondo.finance/api-reference/overview",
+      "query": {},
+      "bodyHash": null,
+      "headersRedacted": {},
+      "auth": {
+        "mode": "unknown",
+        "secretEnvName": null,
+        "scopes": []
+      }
+    },
+    "response": {
+      "httpStatus": null,
+      "contentType": null,
+      "responseFixturePath": null,
+      "responseSha256": null,
+      "redactionPolicy": "pending"
+    },
+    "pagination": {
+      "mode": "unknown",
+      "requestParameter": null,
+      "responseField": null,
+      "observedPageSize": null,
+      "documentedMaximumPageSize": null,
+      "maximumPagesTested": null
+    },
+    "rateLimit": {
+      "documentedLimit": null,
+      "observedHeaders": {},
+      "retryAfterHeader": null,
+      "retryableStatuses": [],
+      "maxAttempts": 0
+    },
+    "coverage": {
+      "chains": [],
+      "fullAddress": "unknown",
+      "stableId": "unknown",
+      "addressFieldPath": null,
+      "stableIdFieldPath": null
+    },
+    "semantics": {
+      "temporal": "unknown",
+      "seriesIdentity": "unknown",
+      "fieldDefinitions": [],
+      "historical": {},
+      "fundamentals": {}
+    },
+    "failureBehavior": {
+      "publicationAction": "fail-closed",
+      "invalidResponseAction": "block"
+    },
+    "licensing": {
+      "termsUrl": "https://docs.ondo.finance/api-reference/overview",
+      "redistributionPermission": "pending",
+      "staticArtifactPermission": "pending"
+    },
+    "verification": {
+      "fixtureReplayable": false,
+      "blockers": [
+        "API limits, errors, and redistribution unverified"
+      ]
+    }
+  },
+  {
+    "sourceId": "dia-ondo-cross-check",
+    "provider": "dia",
+    "kind": "cross-check",
+    "documentationUrl": "https://www.diadata.org/",
+    "exactUrl": "https://www.diadata.org/app/price/asset/Ethereum/0xfAbA6f8e4a5E8Ab82F62fe7C39859FA577269BE3/",
+    "apiVersion": "unverified",
+    "verificationStatus": "pending",
+    "retrievedAt": null,
+    "request": {
+      "method": "GET",
+      "exactUrl": "https://www.diadata.org/app/price/asset/Ethereum/0xfAbA6f8e4a5E8Ab82F62fe7C39859FA577269BE3/",
+      "query": {},
+      "bodyHash": null,
+      "headersRedacted": {},
+      "auth": {
+        "mode": "unknown",
+        "secretEnvName": null,
+        "scopes": []
+      }
+    },
+    "response": {
+      "httpStatus": null,
+      "contentType": null,
+      "responseFixturePath": null,
+      "responseSha256": null,
+      "redactionPolicy": "pending"
+    },
+    "pagination": {
+      "mode": "unknown",
+      "requestParameter": null,
+      "responseField": null,
+      "observedPageSize": null,
+      "documentedMaximumPageSize": null,
+      "maximumPagesTested": null
+    },
+    "rateLimit": {
+      "documentedLimit": null,
+      "observedHeaders": {},
+      "retryAfterHeader": null,
+      "retryableStatuses": [],
+      "maxAttempts": 0
+    },
+    "coverage": {
+      "chains": [
+        "Ethereum"
+      ],
+      "fullAddress": "unknown",
+      "stableId": "unknown",
+      "addressFieldPath": null,
+      "stableIdFieldPath": null
+    },
+    "semantics": {
+      "temporal": "unknown",
+      "seriesIdentity": "unknown",
+      "fieldDefinitions": [],
+      "historical": {},
+      "fundamentals": {}
+    },
+    "failureBehavior": {
+      "publicationAction": "fail-closed",
+      "invalidResponseAction": "block"
+    },
+    "licensing": {
+      "termsUrl": "https://www.diadata.org/",
+      "redistributionPermission": "pending",
+      "staticArtifactPermission": "pending"
+    },
+    "verification": {
+      "fixtureReplayable": false,
+      "blockers": [
+        "identity reconciliation and redistribution unverified"
+      ]
+    }
+  },
+  {
+    "sourceId": "perplexity-classification",
+    "provider": "perplexity",
+    "kind": "classification",
+    "documentationUrl": "https://www.perplexity.ai/",
+    "exactUrl": "perplexity-web-mcp-cli (pwm) research",
+    "apiVersion": "0.14.8",
+    "verificationStatus": "passed",
+    "retrievedAt": "2026-08-06T14:57:32.111Z",
+    "request": {
+      "method": "POST",
+      "exactUrl": "pwm ask",
+      "query": {},
+      "bodyHash": null,
+      "headersRedacted": {},
+      "auth": {
+        "mode": "local-token",
+        "secretEnvName": null,
+        "scopes": []
+      }
+    },
+    "response": {
+      "httpStatus": 200,
+      "contentType": "application/json",
+      "responseFixturePath": "fixtures/perplexity-classification.json",
+      "responseSha256": "bcb2d22eba1ba631745738a06209a538ca4aa2959dac6f8e1e90f66ab4a86330",
+      "redactionPolicy": "personal-use-only"
+    },
+    "pagination": {
+      "mode": "batched-ask",
+      "requestParameter": "tickers per prompt",
+      "responseField": "answer",
+      "observedPageSize": 8,
+      "documentedMaximumPageSize": null,
+      "maximumPagesTested": null
+    },
+    "rateLimit": {
+      "documentedLimit": "subscription quota",
+      "observedHeaders": {},
+      "retryAfterHeader": null,
+      "retryableStatuses": [],
+      "maxAttempts": 0
+    },
+    "coverage": {
+      "chains": [],
+      "fullAddress": "unknown",
+      "stableId": "all",
+      "addressFieldPath": null,
+      "stableIdFieldPath": "canonicalTicker"
+    },
+    "semantics": {
+      "temporal": "as-of-research",
+      "seriesIdentity": "ticker",
+      "fieldDefinitions": [
+        "canonicalTicker",
+        "securityClass",
+        "sector",
+        "tag",
+        "citations"
+      ],
+      "historical": {},
+      "fundamentals": {}
+    },
+    "failureBehavior": {
+      "publicationAction": "fail-closed",
+      "invalidResponseAction": "block"
+    },
+    "licensing": {
+      "termsUrl": "https://www.perplexity.ai/hub/legal",
+      "redistributionPermission": "approved",
+      "staticArtifactPermission": "approved",
+      "scope": "personal-use-only"
+    },
+    "verification": {
+      "fixtureReplayable": true,
+      "blockers": [],
+      "note": "Underlying ticker identity and coarse classification derived from Perplexity web research with cited sources. Live numeric market data is NOT obtained from this source (provider returns NOT AVAILABLE); quantitative fields remain from the on-chain catalog."
+    }
+  }
 ]

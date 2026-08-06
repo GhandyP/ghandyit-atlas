@@ -5,18 +5,19 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "npm run data:snapshot && astro build",
+    "build": "npm run data:snapshot && npm run data:enrich && astro build",
     "preview": "astro preview",
     "typecheck": "astro check",
 "test": "node --test scripts/ondo/catalog-quality.test.mjs scripts/ondo/catalog-filter.test.mjs scripts/ondo/update-ops.test.mjs",
    "test:browser": "playwright test",
    "data:validate": "node scripts/ondo/validate.mjs --catalog-fixture data/ondo/fixtures/catalog-parser-cases.json",
    "data:snapshot": "tsx scripts/ondo/snapshot-catalog.ts",
+   "data:enrich": "tsx scripts/ondo/enrich-underlying.ts",
    "data:ops": "node scripts/ondo/ops-report.mjs",
    "data:rollback": "node scripts/ondo/rollback-catalog.mjs",
    "data:fixtures": "node scripts/ondo/check-fixtures.mjs --metrics data/ondo/fixtures/metric-cases.json",
    "data:publication": "node scripts/ondo/check-publication.mjs",
-   "check": "npm run typecheck && npm run data:validate && npm run data:fixtures && npm run data:publication && npm run data:snapshot && npm run data:ops && npm run test && npm run build && npm run test:browser"
+   "check": "npm run typecheck && npm run data:validate && npm run data:fixtures && npm run data:publication && npm run data:snapshot && npm run data:enrich && npm run data:ops && npm run test && npm run build && npm run test:browser"
   },
   "engines": {
     "node": ">=22.12.0"

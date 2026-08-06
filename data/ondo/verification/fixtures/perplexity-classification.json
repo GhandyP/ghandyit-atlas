@@ -1,0 +1,137 @@
+[
+  {
+    "doneAt": "2026-08-06T14:57:03.414Z",
+    "tickers": [
+      "USDC",
+      "USDY",
+      "MU",
+      "IVV",
+      "NVDA",
+      "SPY",
+      "QQQ",
+      "HIMS"
+    ],
+    "prompt": "Classify each listed issuer as EQUITY, ETF, BOND, or STABLE (stablecoin). Give its sector and a 1-2 word short description. Issuers: USDC (Circle Inter...), USDY (Ondo U.S. Do...), MU (Micron Techn...), IVV (iShares Core...), NVDA (NVIDIA (Ondo...), SPY (SPDR S&P 500...), QQQ (Invesco QQQ ...), HIMS (Hims & Hers ...). Output as a compact list: TICKER | TYPE | sector | tag. Do not invent; say UNKNOWN per field when unsure.",
+    "answer": "USDC | STABLE | stablecoin | USD Coin\nUSDY | UNKNOWN | unknown | unknown\nMU | EQUITY | semiconductors | Micron Tech\nIVV | ETF | broad market | Core ETF\nNVDA | EQUITY | semiconductors | NVIDIA\nSPY | ETF | broad market | S&P 500 ETF\nQQQ | ETF | tech | NASDAQ-100 ETF\nHIMS | EQUITY | health care | Hims & Hers\n\nNotes:\n- USDC is a stablecoin by Circle.\n- USDY is not clearly defined in the provided sources; mark UNKNOWN.\n- IVV, SPY, QQQ are widely recognized ETFs.\n- MU is Micron Technology stock (EQUITY).\n- NVDA is NVIDIA stock (EQUITY).\n- HIMS represents Hims & Hers Health stock (EQUITY).",
+    "citations": [
+      "https://en.wikipedia.org/wiki/List_of_American_exchange-traded_funds",
+      "https://investor.circle.com/overview/default.aspx",
+      "https://finance.yahoo.com/quote/UCIB/",
+      "https://finance.yahoo.com/quote/SPY/holdings/",
+      "https://www.ftportfolios.com/Funds/ETF/SAI/FIIG",
+      "https://pages.m1.com/invest/stocks/MUI",
+      "https://www.etoro.com/wp-content/uploads/2024/12/Invesco-Technology-SP-US-Select-Sector-UCITS-ETF.pdf",
+      "https://www.quiverquant.com/etf/ProShares%20Ultra%20Semiconductors",
+      "https://www.theblock.co/post/407031/ondo-tokenizes-blackrocks-ivv-etf-and-micron-stock-under-us-custodial-model",
+      "https://static1.squarespace.com/static/5a5d3a140100278c8dd709b8/t/6644b2a964eb5a08e7c4c9ee/1715778217545/CrossingBridge+Pre-Merger+SPAC+ETF+Fund+SOI+12.31.2023.pdf"
+    ]
+  },
+  {
+    "doneAt": "2026-08-06T14:57:11.210Z",
+    "tickers": [
+      "MRVL",
+      "GOOGLo...",
+      "SLV",
+      "TLT",
+      "TSLA",
+      "INTC",
+      "IEFA",
+      "AGG"
+    ],
+    "prompt": "Classify each listed issuer as EQUITY, ETF, BOND, or STABLE (stablecoin). Give its sector and a 1-2 word short description. Issuers: MRVL (Marvell Tech...), GOOGLo... (Alphabet Cla...), SLV (iShares Silv...), TLT (iShares 20+ ...), TSLA (Tesla (Ondo ...), INTC (Intel (Ondo ...), IEFA (iShares Core...), AGG (iShares Core...). Output as a compact list: TICKER | TYPE | sector | tag. Do not invent; say UNKNOWN per field when unsure.",
+    "answer": "MRVL | EQUITY | Information Technology | chipmaker\nGOOGLo... (Alphabet Cla...) | EQUITY | Communication Services | tech giant\nSLV | ETF | Materials | silver ETF\nTLT | ETF | Fixed Income | long-duration bonds\nTSLA | EQUITY | Consumer Discretionary | EV maker\nINTC | EQUITY | Information Technology | CPU maker\nIEFA | ETF | Financials/Global Equity | core international equities\nAGG | ETF | Fixed Income | broad US investment-grade bonds\n\nNote: Some tickers are partial/ambiguous; if you want exact matches for each symbol, I can refine with full identifiers.",
+    "citations": [
+      "https://digital.fidelity.com/prgw/digital/research/quote/dashboard/summary?symbol=MRVL",
+      "https://markets.ft.com/data/etfs/tearsheet/summary?s=MVLL:NMQ:USD",
+      "https://markets.ft.com/data/etfs/tearsheet/holdings?s=MRVU:NMQ:USD",
+      "https://finance.yahoo.com/quote/DSTL/profile/",
+      "https://finance.yahoo.com/quote/MRVL/",
+      "https://www.otcmarkets.com/stock/TESL/news/Introducing-the-Simplify-Government-Money-Market-ETF-SBIL?e&id=3275769",
+      "https://cbonds.com/etf/235989/",
+      "https://www.scribd.com/document/659486687/Title-of-Stocks-1",
+      "https://www.roic.ai/quote/FLGV",
+      "http://sellsidehandbook.com/industries/"
+    ]
+  },
+  {
+    "doneAt": "2026-08-06T14:57:17.456Z",
+    "tickers": [
+      "MSTR",
+      "IAU",
+      "ITOT",
+      "MSFT",
+      "TIP",
+      "TSM",
+      "EFA",
+      "ARM"
+    ],
+    "prompt": "Classify each listed issuer as EQUITY, ETF, BOND, or STABLE (stablecoin). Give its sector and a 1-2 word short description. Issuers: MSTR (MicroStrateg...), IAU (iShares Gold...), ITOT (iShares Core...), MSFT (Microsoft (O...), TIP (iShares TIPS...), TSM (Taiwan Semic...), EFA (iShares MSCI...), ARM (Arm Holdings...). Output as a compact list: TICKER | TYPE | sector | tag. Do not invent; say UNKNOWN per field when unsure.",
+    "answer": "MSTR | EQUITY | Technology | Software & crypto analytics\nIAU | ETF | Commodities | Gold trust\nITOT | ETF | Broad market | Core equity\nMSFT | EQUITY | Technology | Software giant\nTIP | ETF | Fixed income | Inflation-protected bonds\nTSM | EQUITY | Semiconductors | Foundry leader\nEFA | ETF | International equities | Developed markets\nARM | EQUITY | Technology | CPU/iplicensing",
+    "citations": [
+      "https://www.sec.gov/Archives/edgar/data/91142/000009114226000084/aos-20260331.htm",
+      "https://www.kyret.ky.gov/Investments/Investments%20Holdings/KTYALL%20Holdings%20as%20of%2030%20September%202023.pdf",
+      "https://finance.yahoo.com/quote/VGVT/",
+      "https://etf.dws.com/download/asset/85ef19e4-373b-4cda-a485-716562abf7af",
+      "https://www.ftportfolios.com/Funds/ETF/SAI/FIIG",
+      "https://www.marketwatch.com/investing/fund/btgd/holdings",
+      "https://pages.m1.com/invest/stocks/MUI",
+      "https://www.marketbeat.com/stocks/NYSEARCA/IAUM/sec-filings/",
+      "https://bondbloxxetf.com/wp-content/uploads/BondBloxx_Product_Guide.pdf",
+      "https://exchangetradedfunds.com/secnewslink.php?artic=71608&page=5"
+    ]
+  },
+  {
+    "doneAt": "2026-08-06T14:57:24.014Z",
+    "tickers": [
+      "SPCX",
+      "IEMG",
+      "AMD",
+      "IWF",
+      "AAPL",
+      "EEM",
+      "COIN",
+      "AMZN"
+    ],
+    "prompt": "Classify each listed issuer as EQUITY, ETF, BOND, or STABLE (stablecoin). Give its sector and a 1-2 word short description. Issuers: SPCX (SpaceX (Ondo...), IEMG (iShares Core...), AMD (AMD (Ondo To...), IWF (iShares Russ...), AAPL (Apple (Ondo ...), EEM (iShares MSCI...), COIN (Coinbase (On...), AMZN (Amazon (Ondo...). Output as a compact list: TICKER | TYPE | sector | tag. Do not invent; say UNKNOWN per field when unsure.",
+    "answer": "SPCX | EQUITY | SpaceX space | issuer\nIEMG | EQUITY | Emerging Markets | ETF\nAMD | EQUITY | Semiconductors | hardware\nIWF | EQUITY | Large-cap US | ETF\nAAPL | EQUITY | Technology | hardware\nEEM | EQUITY | Emerging Markets | ETF\nCOIN | EQUITY | Crypto exchange | stock\nAMZN | EQUITY | E-commerce | tech\n\nNote: All are stock issuers or ETFs based on provided names; some tickers may correspond to funds (ETFs) rather than individual equities. If you expect a different mapping, please provide exact issuer definitions.",
+    "citations": [
+      "https://www.spglobal.com/spdji/en/documents/ticker-info-sheets/spdji-fa-us-listed-etfs.pdf",
+      "https://ca.finance.yahoo.com/quote/SPCX/",
+      "https://www.morningstar.com/stocks/xnas/spcx/quote",
+      "https://finance.yahoo.com/quote/FEDX/holdings/",
+      "https://www.investmentnews.com/etfs/spacex-mega-ipo-sparks-flurry-of-etf-activity/267071",
+      "https://cbonds.com/etf/12159/",
+      "https://1859438673.rsc.cdn77.org/web/SQ_data_equities.txt",
+      "https://ru.tradingview.com/symbols/NASDAQ-SPCX/",
+      "https://cdn.prod.website-files.com/6619253b44eff8b692124c59/686fcbebe15fe7b9ec903511_TCM_SPCX_FactSheet_06302025_2.pdf",
+      "https://www.exchangetradedfunds.com/newslinkAM.php?artic=74006&page=1"
+    ]
+  },
+  {
+    "doneAt": "2026-08-06T14:57:32.110Z",
+    "tickers": [
+      "ORCL",
+      "AVGO",
+      "META",
+      "IWN",
+      "LLY",
+      "HOOD",
+      "QCOM",
+      "KO"
+    ],
+    "prompt": "Classify each listed issuer as EQUITY, ETF, BOND, or STABLE (stablecoin). Give its sector and a 1-2 word short description. Issuers: ORCL (Oracle (Ondo...), AVGO (Broadcom (On...), META (Meta Platfor...), IWN (iShares Russ...), LLY (Eli Lilly (O...), HOOD (Robinhood Ma...), QCOM (Qualcomm (On...), KO (Coca-Cola (O...). Output as a compact list: TICKER | TYPE | sector | tag. Do not invent; say UNKNOWN per field when unsure.",
+    "answer": "I don’t have enough information here to confidently categorize all tickers. Based on common knowledge:\n\n- ORCL | EQUITY | Technology | Oracle Corp\n- AVGO | EQUITY | Semiconductors | Broadcom Corp\n- META | EQUITY | Communication Services | Meta Platforms\n- IWN | EQUITY | Financials/Index ETF exposure | iShares Russell 2000 Value ETF (Note: IWN is an ETF, but ticker here may refer to a fund; if treated as issuer, UNKNOWN)\n- LLY | EQUITY | Healthcare | Eli Lilly\n- HOOD | EQUITY | Financial Technology | Robinhood Markets\n- QCOM | EQUITY | Technology | Qualcomm\n- KO | EQUITY | Consumer Staples | Coca-Cola\n\nIf IWN is intended as an ETF issuer rather than a corporation, classify as ETF with sector broadly Financials/Market Exposure.\n\n- Output format (compact): Ticker | TYPE | sector | tag\nExample: ORCL | EQUITY | Technology | Oracle\n\nNote: Some tickers may be issuer-typed differently in your system; please confirm if IWN is the intended issuer and if any ticker meanings differ.",
+    "citations": [
+      "https://www.blueowl.com/sites/default/files/2025-05/Blue_Owl_BDCs_Fixed_Income_Investor_Materials_1Q25.pdf?__hstc=206289548.4b44870ec4a577029c49e44b73bd3bee.1755216000204.1755216000205.1755216000206.1&__hssc=206289548.1.1755216000207&__hsfp=3825276191",
+      "https://finance.yahoo.com/markets/options/articles/invesco-global-ex-us-high-102002931.html",
+      "https://finance.yahoo.com/quote/BAD/",
+      "https://finance.yahoo.com/quote/FEDX/holdings/",
+      "https://www.etoro.com/wp-content/uploads/2024/12/Invesco-Technology-SP-US-Select-Sector-UCITS-ETF.pdf",
+      "https://www.marketwatch.com/investing/fund/hygv",
+      "https://www.ca-assicurazioni.it/media/filer_public/5e/d0/5ed0b488-24a7-4f80-a5cf-6b3b0b1bcde7/44multi_units_luxembourg.pdf",
+      "http://sellsidehandbook.com/industries/",
+      "https://static1.squarespace.com/static/5a5d3a140100278c8dd709b8/t/6644b2a964eb5a08e7c4c9ee/1715778217545/CrossingBridge+Pre-Merger+SPAC+ETF+Fund+SOI+12.31.2023.pdf",
+      "https://www.stockbossup.com/pages/post/42298/metal-packaging-stocks-the-companies-powering-canned-goods-beverages"
+    ]
+  }
+]

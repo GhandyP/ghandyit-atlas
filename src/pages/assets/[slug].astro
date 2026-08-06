@@ -31,6 +31,7 @@ const safeWebsite = (value: string | null) => {
 const identityLabel = (v: string) => (({ verified: 'Verificada', unresolved: 'Sin resolver', 'candidate-display-only': 'Solo candidata para display' }) as Record<string, string>)[v] ?? 'Desconocido';
 const rowStatusLabel = (v: string) => (({ valid: 'Válida', partial: 'Parcial', invalid: 'Inválida', 'unresolved-identity': 'Identidad sin resolver', 'display-duplicate-unresolved': 'Display duplicado sin resolver' }) as Record<string, string>)[v] ?? v;
 const numericLabel = (v: string) => (({ 'valid-positive': 'Válido positivo', 'valid-zero': 'Cero explícito', missing: 'Ausente', malformed: 'Malformado', unresolved: 'Sin resolver' }) as Record<string, string>)[v] ?? 'Desconocido';
+const assetTypeLabel = (v: string) => (({ equities: 'Acciones', 'equity-etfs': 'ETFs de acciones', 'fixed-income': 'Renta fija / tesoros', stablecoins: 'Stablecoins / cash-like', unknown: 'Otro / Desconocido' }) as Record<string, string>)[v] ?? v;
 
 const snapshotKind = ondoAnalytics.mode === 'catalog' ? 'catálogo versionado (sin proveedores)' : ondoAnalytics.mode === 'catalog-fallback' ? 'fallback de catálogo' : 'enriquecido';
 const title = `${asset.symbol ?? 'Activo'} · Detalle del catálogo`;
@@ -59,7 +60,7 @@ const title = `${asset.symbol ?? 'Activo'} · Detalle del catálogo`;
           <div><dt>Identidad mostrada</dt><dd><code>{rawValue(asset.contractAddress)}</code></dd><small>Display-only; no se usa para joins.</small></div>
           <div><dt>Identidad raw</dt><dd><code>{rawValue(asset.contractAddressRaw)}</code>{asset.addressIsTruncated ? ' · truncada' : ''}</dd></div>
           <div><dt>Estado de identidad</dt><dd>{identityLabel(asset.identityState)}{asset.addressIsTruncated ? ' · dirección truncada' : ''}</dd></div>
-          <div><dt>Clave canónica</dt><dd><code>{rawValue(asset.canonicalKey)}</code></dd><small>Sin autoridad de identidad confirmada.</small></div>
+          <div><dt>Clave canónica</dt><dd><code>{rawValue(asset.canonicalKey)}</code></dd><small>{asset.classification ? 'Subyacente canónico derivado (fuente clasificación).' : 'Sin autoridad de identidad confirmada.'}</small></div>
           <div><dt>Market cap</dt><dd>{moneyValue(asset.marketCap)}</dd><small>Raw: <code>{rawValue(asset.marketCapRaw)}</code> · {numericLabel(asset.marketCapState)}</small></div>
           <div><dt>Holders</dt><dd>{numberValue(asset.holders)}</dd><small>Raw: <code>{rawValue(asset.holdersRaw)}</code> · {numericLabel(asset.holdersState)}</small></div>
           <div><dt>Website</dt><dd>{safeWebsite(asset.website) ? <a href={safeWebsite(asset.website) ?? undefined} target="_blank" rel="noreferrer">{new URL(safeWebsite(asset.website) ?? 'https://').hostname}<span class="sr-only"> (se abre en una pestaña nueva)</span></a> : 'N/D'}</dd></div>
@@ -75,10 +76,26 @@ const title = `${asset.symbol ?? 'Activo'} · Detalle del catálogo`;
         ) : null}
       </section>
 
+      {asset.classification ? (
+        <section class="asset-detail__section" aria-labelledby="underlying-title">
+          <h2 id="underlying-title">Subyacente y clasificación</h2>
+          <dl class="asset-detail__grid">
+            <div><dt>Subyacente (canónico)</dt><dd><code>{rawValue(asset.canonicalKey)}</code></dd><small>Derivado del símbolo del token · fuente {asset.classification.sourceId ?? 'N/D'}</small></div>
+            <div><dt>Tipo de activo</dt><dd>{assetTypeLabel(asset.classification.assetType)}</dd></div>
+            <div><dt>Sector</dt><dd>{rawValue(asset.classification.sector)}</dd></div>
+            <div><dt>Descripción</dt><dd>{rawValue(asset.classification.description)}</dd></div>
+          </dl>
+          {asset.classification.citations && asset.classification.citations.length > 0 ? (
+            <p><strong>Referencias de la investigación:</strong> {asset.classification.citations.slice(0, 3).map((cite) => <a class="asset-detail__cite" href={safeWebsite(cite) ?? undefined} target="_blank" rel="noreferrer">{new URL(safeWebsite(cite) ?? 'https://').hostname}<span class="sr-only"> (se abre en una pestaña nueva)</span></a>)}</p>
+          ) : null}
+          <p class="asset-detail__note">Clasificación informativa derivada de investigación web con `pwm` (Perplexity), uso personal, sin cadencia de refresco. No reemplaza la evidencia on-chain del catálogo.</p>
+        </section>
+      ) : null}
+
       <section class="asset-detail__section" aria-labelledby="snapshot-title">
         <h2 id="snapshot-title">Contexto del snapshot</h2>
         <p>Este detalle corresponde al <strong>{snapshotKind}</strong> con ID <code>{ondoAnalytics.snapshotId}</code>, generado {ondoAnalytics.generatedAt ?? 'N/D'} · catálogo del snapshot {ondoAnalytics.catalogSnapshotAt ?? 'N/D'}. La tabla principal comparte el mismo snapshot.</p>
-        <p>Métricas de proveedor y score permanecen desactivados; cadencia de refresco no prometida.</p>
+        <p>Métricas numéricas de proveedor y score permanecen desactivados; la clasificación de subyacente es informativa y sin cadencia de refresco prometida.</p>
       </section>
 
       <div class="disclaimer">
@@ -103,6 +120,9 @@ const title = `${asset.symbol ?? 'Activo'} · Detalle del catálogo`;
   .asset-detail__grid small { color: var(--muted); display: block; margin-top: 6px; }
   .asset-detail__warning { color: #92600a; background: rgba(255, 193, 7, 0.12); border: 1px solid rgba(255, 193, 7, 0.4); padding: 10px 12px; border-radius: 12px; }
   .asset-detail__errors code { background: var(--surface-soft); padding: 0 4px; border-radius: 4px; }
+  .asset-detail__cite { display: inline-block; color: var(--accent); font-weight: 600; text-decoration: none; margin-right: 10px; }
+  .asset-detail__cite:hover { text-decoration: underline; }
+  .asset-detail__note { color: var(--muted); font-size: 0.85rem; }
 
   @media (max-width: 640px) {
     .asset-detail__head { flex-direction: column; }
