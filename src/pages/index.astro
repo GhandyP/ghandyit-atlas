@@ -7,6 +7,9 @@ import AnalyticsDashboard from '../components/AnalyticsDashboard.astro';
 import { ondoAssets, ondoCatalogQuality, ondoStats } from '../data/ondoAssets';
 import { ondoAnalytics } from '../data/ondoAnalytics';
 import { buildClassificationView } from '../data/analytics/classifications';
+import { readReleaseHealth } from '../data/analytics/releaseHealth.mjs';
+
+const releaseHealth = readReleaseHealth();
 
 const compactMoney = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -46,7 +49,7 @@ const analyticsView = buildClassificationView(ondoAnalytics.assets as Array<{ cl
       zeroMarketCapCount={pageSummary.zeroMarketCapCount}
     />
 
-    <CatalogQuality catalog={ondoCatalogQuality} analytics={ondoAnalytics} />
+    <CatalogQuality catalog={ondoCatalogQuality} analytics={ondoAnalytics} health={releaseHealth} />
 
     <AnalyticsDashboard
       groups={analyticsView.groups}

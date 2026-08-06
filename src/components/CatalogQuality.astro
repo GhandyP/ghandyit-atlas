@@ -4,9 +4,16 @@ import type { AnalyticsSnapshot, CatalogQuality as CatalogQualityModel } from '.
 interface Props {
   catalog: CatalogQualityModel;
   analytics: Pick<AnalyticsSnapshot, 'mode' | 'snapshotId' | 'generatedAt' | 'catalogSnapshotAt' | 'quality'>;
+  health: {
+    integrity: string;
+    current: { snapshotId: string | null; integrity: string };
+    previous: { snapshotId: string | null; integrity: string; available: boolean };
+    policyHash: string | null;
+    published: boolean;
+  };
 }
 
-const { catalog, analytics } = Astro.props;
+const { catalog, analytics, health } = Astro.props;
 const sourceLabel = catalog.state === 'available' ? 'Fuente legible' : catalog.state === 'catalog-source-missing' ? 'Fuente no disponible' : 'Fuente con formato no válido';
 const mode = analytics.mode;
 const isFallback = mode === 'catalog-fallback';
@@ -40,6 +47,8 @@ const count = (value: number) => value.toLocaleString('es-ES');
     <p><strong>As-of del catálogo: {catalog.asOf ?? 'unknown'}.</strong> La fuente no contiene una fecha de corte verificable.</p>
     <p>Snapshot analítico: <strong>{snapshotKind}</strong> · ID: <code>{analytics.snapshotId}</code> · Estado: <code>{statusReason}</code>.</p>
     <p>Generado: {analytics.generatedAt ?? 'N/D'} · Catálogo del snapshot: {analytics.catalogSnapshotAt ?? 'N/D'}.</p>
+    <p>Publicación: corriente <code>{health.current.snapshotId ?? 'sin snapshot'}</code> · anterior <code>{health.previous.available ? health.previous.snapshotId : 'sin anterior'}</code> · integridad <code>{health.integrity}</code>.</p>
+    <p>Cadencia de refresco no prometida: el snapshot se regenera en cada build; un fallo de publicación conserva el último snapshot válido.</p>
     <p>Las métricas de proveedor y el score permanecen desactivados hasta verificar fuente, identidad y licencia. No se hacen joins por direcciones truncadas.</p>
   </div>
 </section>

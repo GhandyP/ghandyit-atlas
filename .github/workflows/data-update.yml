@@ -1,0 +1,73 @@
+name: Scheduled data snapshot update
+
+on:
+  schedule:
+    # Weekly Monday 06:00 UTC. Cadence is not yet promised in the UI; this
+    # job is the auditable update path that operates separately from builds.
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Build catalog candidate snapshot
+        run: npm run data:snapshot
+
+      # Validation gates fail closed: a failing step stops the job before the
+      # publish step, so the last valid snapshot on the branch is preserved.
+      - name: Validate fixtures and publication gates
+        run: |
+          npm run data:validate
+          npm run data:fixtures
+          npm run data:publication
+
+      - name: Release health / ops log
+        run: npm run data:ops
+
+      - name: Publish snapshot audit trail to data/snapshots
+        run: |
+          git config user.name "ops[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin data/snapshots || true
+          if git rev-parse --verify origin/data/snapshots >/dev/null 2>&1; then
+            git switch data/snapshots
+          else
+            git switch -c data/snapshots
+          fi
+          git add -f src/data/generated/ondo/current.json \
+                      src/data/generated/ondo/previous.json \
+                      src/data/generated/ondo/snapshots
+          if git diff --cached --quiet; then
+            echo "No snapshot delta to publish."
+          else
+            git commit -m "data: publish updated catalog snapshot"
+            git push origin data/snapshots
+          fi
+
+      - name: Upload ops report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-health
+          path: |
+            src/data/generated/ondo/current.json
+            src/data/generated/ondo/previous.json
+          if-no-files-found: warn
