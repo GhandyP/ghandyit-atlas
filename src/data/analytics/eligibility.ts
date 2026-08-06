@@ -2,7 +2,7 @@ export type Semantics = Record<string, any>;
 export type Metric<T = number> = { value: T | null; status: 'derived' | 'unavailable' | 'observed'; availability: string; reason: string | null; method: string | null; sourceId: string | null; asOf: string | null; inputIds: string[]; semantics: Semantics | null };
 const fullAddress = /^0x[\da-f]{40}$/i;
 const pick = (value: any, key = 'value') => value && typeof value === 'object' ? value[key] ?? value.value ?? value.kind ?? value.price ?? null : value;
-const known = (value: any) => value !== null && value !== undefined && value !== '' && value !== 'unknown' && (typeof value !== 'object' || Object.values(value).some((item) => known(item)));
+const known = (value: any): boolean => value !== null && value !== undefined && value !== '' && value !== 'unknown' && (typeof value !== 'object' || Object.values(value).some((item) => known(item)));
 const details = (input: any): Semantics => ({ ...(input?.series?.semantics ?? {}), ...(input?.semantics ?? {}), ...(input ?? {}) });
 const unavailable = (reason: string, semantics: Semantics = {}, method: string | null = null, inputIds: string[] = []): Metric => ({ value: null, status: 'unavailable', availability: reason === 'not-applicable-cohort' ? 'not-applicable' : reason === 'stale-input' ? 'stale' : 'unavailable', reason, method, sourceId: semantics.sourceId ?? null, asOf: semantics.asOf ?? null, inputIds, semantics });
 const identity = (value: any) => {

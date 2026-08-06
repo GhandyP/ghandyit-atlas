@@ -154,7 +154,7 @@ const numericStateLabel = (value: OndoCatalogAsset['marketCapState']) => ({
   </div>
 </section>
 
-<script type="application/json" id="catalogAssets" set:html={catalogAssetsJson}></script>
+<script type="application/json" id="catalogAssets" is:inline set:html={catalogAssetsJson}></script>
 
 <script>
   import { applyCatalogFilters } from '../data/analytics/catalogFilter.mjs';
@@ -165,21 +165,21 @@ const numericStateLabel = (value: OndoCatalogAsset['marketCapState']) => ({
     sortKey: 'rank-asc',
   };
 
-  const resultSummary = document.getElementById('resultSummary');
-  const emptyState = document.getElementById('emptyState');
-  const searchInput = document.getElementById('searchInput');
-  const qualitySelect = document.getElementById('qualitySelect');
-  const sortSelect = document.getElementById('sortSelect');
-  const resetButton = document.getElementById('resetCatalogFilters');
-  const table = document.getElementById('ondoTable');
-  const tbody = document.querySelector('[data-asset-body]');
-  const rows = Array.from(document.querySelectorAll('[data-asset-row]'));
+  const resultSummary = document.getElementById('resultSummary') as HTMLElement | null;
+  const emptyState = document.getElementById('emptyState') as HTMLElement | null;
+  const searchInput = document.getElementById('searchInput') as HTMLInputElement | null;
+  const qualitySelect = document.getElementById('qualitySelect') as HTMLSelectElement | null;
+  const sortSelect = document.getElementById('sortSelect') as HTMLSelectElement | null;
+  const resetButton = document.getElementById('resetCatalogFilters') as HTMLButtonElement | null;
+  const table = document.getElementById('ondoTable') as HTMLTableElement | null;
+  const tbody = document.querySelector('[data-asset-body]') as HTMLTableSectionElement | null;
+  const rows = Array.from(document.querySelectorAll('[data-asset-row]')) as HTMLElement[];
 
-  const assets = JSON.parse(document.getElementById('catalogAssets').textContent);
+  const assets = JSON.parse((document.getElementById('catalogAssets') as HTMLScriptElement | null)?.textContent ?? '[]');
   const rowByKey = new Map(rows.map((row) => [row.dataset.rowKey, row]));
   const totalRows = Number.parseInt(table?.dataset.totalRows ?? String(rows.length), 10);
 
-  function updateSummary(visibleCount) {
+  function updateSummary(visibleCount: number) {
     if (!resultSummary) return;
     const sortLabel = sortSelect?.selectedOptions[0]?.textContent ?? '';
     const qualityLabel = qualitySelect?.selectedOptions[0]?.textContent ?? '';
@@ -211,17 +211,17 @@ const numericStateLabel = (value: OndoCatalogAsset['marketCapState']) => ({
     render();
 
     searchInput?.addEventListener('input', (event) => {
-      state.searchTerm = (event.target.value || '').toString().trim().toLowerCase();
+      state.searchTerm = ((event.target as HTMLInputElement | null)?.value || '').toString().trim().toLowerCase();
       render();
     });
 
     sortSelect?.addEventListener('change', (event) => {
-      state.sortKey = event.target.value;
+      state.sortKey = (event.target as HTMLSelectElement | null)?.value ?? '';
       render();
     });
 
     qualitySelect?.addEventListener('change', (event) => {
-      state.quality = event.target.value;
+      state.quality = (event.target as HTMLSelectElement | null)?.value ?? '';
       render();
     });
 

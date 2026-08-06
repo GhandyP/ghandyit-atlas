@@ -7,7 +7,7 @@ export interface OndoCatalogAsset {
   marketCap: number | null; marketCapRaw: string | null; holders: number | null; holdersRaw: string | null;
   marketCapState: ParsedCatalogRow['marketCap']['state']; holdersState: ParsedCatalogRow['holders']['state']; identityState: ParsedCatalogRow['identityState']; addressIsTruncated: boolean; canonicalKey: string | null; rowStatus: ParsedCatalogRow['rowStatus']; validationErrors: string[];
 }
-export const parseCatalog = (source: string | unknown[]): ParsedCatalogRow[] => parseCatalogRows(typeof source === 'string' ? parseMarkdown(source) : source);
+export const parseCatalog = (source: string | unknown[]): ParsedCatalogRow[] => parseCatalogRows(typeof source === 'string' ? parseMarkdown(source) : source) as ParsedCatalogRow[];
 export const toCatalogAsset = (row: ParsedCatalogRow): OndoCatalogAsset => ({
   rawRowKey: row.rawRowKey,
   sourceLine: row.sourceLine,

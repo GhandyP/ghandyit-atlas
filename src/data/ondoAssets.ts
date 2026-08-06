@@ -21,7 +21,7 @@ try {
 
 export { ondoCatalogRows };
 export const ondoAssets: OndoAsset[] = ondoCatalogRows.map(toCatalogAsset);
-export const ondoCatalogQuality: CatalogQuality = summarizeCatalogQuality(ondoCatalogRows, 'ontonew.md', catalogState);
+export const ondoCatalogQuality: CatalogQuality = summarizeCatalogQuality(ondoCatalogRows, 'ontonew.md', catalogState) as CatalogQuality;
 
 const compactNumber = new Intl.NumberFormat('en-US', { notation: 'compact', compactDisplay: 'short', maximumFractionDigits: 1 });
 const marketCapAssets = ondoAssets.filter((asset) => asset.marketCap !== null);

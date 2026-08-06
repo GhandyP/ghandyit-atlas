@@ -60,7 +60,7 @@
     </section>
     <script>
       const dashboard = document.querySelector('.analytics-dashboard');
-      const status = dashboard?.querySelector('.analytics-quality');
+      const status = dashboard?.querySelector('.analytics-quality') as HTMLElement | null;
       dashboard?.querySelectorAll('[data-analytics-group]').forEach((button) => button.addEventListener('click', () => {
         dashboard.querySelectorAll('[data-analytics-group]').forEach((item) => { item.classList.toggle('active', item === button); item.setAttribute('aria-selected', String(item === button)); });
         if (status) status.dataset.selectedGroup = button.getAttribute('data-analytics-group') ?? 'unknown';

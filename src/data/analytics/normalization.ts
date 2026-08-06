@@ -5,5 +5,5 @@ export function normalizeCohort(values: Array<number | null>, direction: Directi
   const valid = values.filter((value): value is number => Number.isFinite(value));
   if (!valid.length) return values.map(() => null);
   const min = Math.min(...valid), max = Math.max(...valid), span = max - min || 1;
-  return values.map((value) => Number.isFinite(value) ? (direction === 'lower' ? (max - value) / span : (value - min) / span) : null);
+  return values.map((value) => value !== null && Number.isFinite(value) ? (direction === 'lower' ? (max - value) / span : (value - min) / span) : null);
 }

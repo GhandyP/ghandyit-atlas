@@ -13,6 +13,7 @@ function fixturePath(source: SourceRecord): string {
   const sourceId = (source as Partial<SourceRecord> | null)?.sourceId;
   const relativePath = source?.response?.responseFixturePath;
   if (unsafeRelative(relativePath)) throw sourceError(sourceId);
+  if (typeof relativePath !== 'string') throw sourceError(sourceId);
   const verificationRoot = resolve(process.cwd(), 'data/ondo/verification');
   try {
     const canonicalRoot = realpathSync(verificationRoot);
@@ -30,14 +31,15 @@ function fixturePath(source: SourceRecord): string {
 
 export function gateSource(source: SourceRecord) {
   const value = source as Partial<SourceRecord> | null;
-  const response = value?.response;
+  const response = value?.response ?? null;
   const verification = value?.verification;
   const coverage = value?.coverage;
   const semantics = value?.semantics;
   const failureBehavior = value?.failureBehavior;
   const licensing = value?.licensing;
-  const complete = Boolean(value && typeof value.sourceId === 'string' && value.verificationStatus === 'passed' && verification?.fixtureReplayable === true && Array.isArray(verification.blockers) && verification.blockers.length === 0 && Number.isInteger(response?.httpStatus) && response.httpStatus >= 200 && response.httpStatus < 300 && typeof response.responseFixturePath === 'string' && typeof response.responseSha256 === 'string' && /^[a-f\d]{64}$/i.test(response.responseSha256) && (coverage?.fullAddress === 'all' || coverage?.stableId === 'all') && typeof semantics?.seriesIdentity === 'string' && semantics.seriesIdentity !== 'unknown' && failureBehavior?.publicationAction === 'fail-closed' && licensing?.redistributionPermission === 'approved' && licensing?.staticArtifactPermission === 'approved');
+  const complete = Boolean(value && typeof value.sourceId === 'string' && value.verificationStatus === 'passed' && verification?.fixtureReplayable === true && Array.isArray(verification.blockers) && verification.blockers.length === 0 && response !== null && typeof response.httpStatus === 'number' && response.httpStatus >= 200 && response.httpStatus < 300 && typeof response.responseFixturePath === 'string' && typeof response.responseSha256 === 'string' && /^[a-f\d]{64}$/i.test(response.responseSha256) && (coverage?.fullAddress === 'all' || coverage?.stableId === 'all') && typeof semantics?.seriesIdentity === 'string' && semantics.seriesIdentity !== 'unknown' && failureBehavior?.publicationAction === 'fail-closed' && licensing?.redistributionPermission === 'approved' && licensing?.staticArtifactPermission === 'approved');
   if (!complete) throw sourceError(value?.sourceId);
+  if (!value || !response) throw sourceError(value?.sourceId);
   try {
     if (createHash('sha256').update(readFileSync(fixturePath(source))).digest('hex') !== response.responseSha256) throw new Error();
   } catch {

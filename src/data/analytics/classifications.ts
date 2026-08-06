@@ -15,7 +15,7 @@ export const normalizeAssetType = (value: unknown) => {
 type Asset = { classification?: { assetType?: string | { value?: string } } };
 
 export function buildClassificationView(assets: Asset[]) {
-  const counts = new Map(ASSET_TYPES.map(({ key }) => [key, 0]));
+  const counts = new Map<string, number>(ASSET_TYPES.map(({ key }) => [key, 0]));
   for (const asset of assets) {
     const key = normalizeAssetType(asset.classification?.assetType);
     counts.set(key, (counts.get(key) ?? 0) + 1);

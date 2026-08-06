@@ -7,10 +7,16 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "typecheck": "astro check",
     "test": "node --test scripts/ondo/catalog-quality.test.mjs scripts/ondo/catalog-filter.test.mjs",
     "test:browser": "playwright test",
-    "data:validate": "node scripts/ondo/validate.mjs",
-    "data:publication": "node scripts/ondo/check-publication.mjs"
+    "data:validate": "node scripts/ondo/validate.mjs --catalog-fixture data/ondo/fixtures/catalog-parser-cases.json",
+    "data:fixtures": "node scripts/ondo/check-fixtures.mjs --metrics data/ondo/fixtures/metric-cases.json",
+    "data:publication": "node scripts/ondo/check-publication.mjs",
+    "check": "npm run typecheck && npm run data:validate && npm run data:fixtures && npm run data:publication && npm run test && npm run build && npm run test:browser"
+  },
+  "engines": {
+    "node": ">=22.12.0"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +25,9 @@
     "astro": "^6.1.3"
   },
   "devDependencies": {
-    "playwright": "^1.59.1"
+    "@astrojs/check": "^0.9.10",
+    "playwright": "^1.59.1",
+    "tsx": "^4.23.8",
+    "typescript": "^5.9.3"
   }
 }
