@@ -8,6 +8,9 @@ dist/
 .pi/
 thoughts/ledgers/
 
+# Generated snapshot and audit artifacts — regenerated at build/update time
+src/data/generated/
+
 # Session/chat exports and scrape artifacts — not source
 opencoede.md
 session-ses_*.md

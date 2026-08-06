@@ -33,7 +33,15 @@ const hashKeys = ['policyHash', 'methodHash', 'policySha256', 'methodSha256'];
 const maxAgeDays = () => { const value = Number(process.env.ONDO_MAX_SNAPSHOT_AGE_DAYS ?? 7); return Number.isFinite(value) && value >= 0 ? value : 7; };
 const timestampState = (value: unknown, now: number) => { if (typeof value !== 'string') return 'invalid'; const parsed = Date.parse(value); if (!Number.isFinite(parsed) || parsed > now) return 'invalid'; return now - parsed <= maxAgeDays() * 86400000 ? 'fresh' : 'stale'; };
 const sourceAgeDays = (value: unknown) => typeof value === 'string' && Number.isFinite(Date.parse(value)) ? Math.max(0, Math.floor((Date.now() - Date.parse(value)) / 86400000)) : null;
-const freshnessReason = (snapshot: Partial<AnalyticsSnapshot>) => { const now = Date.now(); const generated = timestampState(snapshot.generatedAt, now); const catalog = timestampState(snapshot.catalogSnapshotAt, now); return generated === 'invalid' || catalog === 'invalid' ? 'invalid-snapshot-freshness' : generated === 'stale' || catalog === 'stale' ? 'stale-snapshot' : null; };
+const freshnessReason = (snapshot: Partial<AnalyticsSnapshot>) => {
+  const now = Date.now();
+  const generated = timestampState(snapshot.generatedAt, now);
+  if (generated === 'invalid') return 'invalid-snapshot-freshness';
+  if (generated === 'stale') return 'stale-snapshot';
+  if (snapshot.mode === 'catalog') return null;
+  const catalog = timestampState(snapshot.catalogSnapshotAt, now);
+  return catalog === 'invalid' ? 'invalid-snapshot-freshness' : catalog === 'stale' ? 'stale-snapshot' : null;
+};
 const fallback = (reason = 'no-generated-snapshot'): AnalyticsSnapshot => {
   const reasons = [reason];
   if (ondoCatalogQuality.reason && !reasons.includes(ondoCatalogQuality.reason)) reasons.push(ondoCatalogQuality.reason);
@@ -43,8 +51,10 @@ const valid = (pointer: any, snapshot: any, manifest: any, snapshotFile: string 
   const snapshotHash = pick(pointer, ['snapshotSha256', 'snapshotHash', 'contentSha256']);
   const manifestHash = pick(pointer, ['manifestSha256', 'manifestHash']);
   const policyHash = pick(pointer, hashKeys);
-  const sources = Array.isArray(snapshot?.sources) && snapshot.sources.length > 0 && new Set(snapshot.sources.map((source: any) => source?.sourceId)).size === snapshot.sources.length && snapshot.sources.every(isApprovedSource);
-  return Number.isInteger(pointer?.schemaVersion) && pointer.schemaVersion > 0 && typeof pointer.snapshotId === 'string' && typeof pointer.manifestId === 'string' && pointer.snapshotId === snapshot?.snapshotId && pointer.snapshotId === manifest?.snapshotId && pointer.manifestId === (manifest?.manifestId ?? manifest?.snapshotId) && pointer.schemaVersion === snapshot?.schemaVersion && pointer.schemaVersion === manifest?.schemaVersion && snapshot?.mode === 'enriched' && Array.isArray(snapshot.assets) && sources && hash(snapshotHash) && hash(manifestHash) && snapshotHash === sha(snapshotFile) && manifestHash === sha(manifestFile) && snapshotHash === pick(manifest, ['snapshotSha256', 'snapshotHash', 'contentSha256']) && policyHash !== null && policyHash === pick(manifest, hashKeys) && (!snapshot.policyHash || snapshot.policyHash === policyHash);
+  const isEnriched = snapshot?.mode === 'enriched';
+  const isCatalog = snapshot?.mode === 'catalog';
+  const sources = isEnriched ? Array.isArray(snapshot?.sources) && snapshot.sources.length > 0 && new Set(snapshot.sources.map((source: any) => source?.sourceId)).size === snapshot.sources.length && snapshot.sources.every(isApprovedSource) : isCatalog ? Array.isArray(snapshot?.sources) && snapshot.sources.length === 0 : false;
+  return Number.isInteger(pointer?.schemaVersion) && pointer.schemaVersion > 0 && typeof pointer.snapshotId === 'string' && typeof pointer.manifestId === 'string' && pointer.snapshotId === snapshot?.snapshotId && pointer.snapshotId === manifest?.snapshotId && pointer.manifestId === (manifest?.manifestId ?? manifest?.snapshotId) && pointer.schemaVersion === snapshot?.schemaVersion && pointer.schemaVersion === manifest?.schemaVersion && (isEnriched || isCatalog) && Array.isArray(snapshot.assets) && sources && hash(snapshotHash) && hash(manifestHash) && snapshotHash === sha(snapshotFile) && manifestHash === sha(manifestFile) && snapshotHash === pick(manifest, ['snapshotSha256', 'snapshotHash', 'contentSha256']) && policyHash !== null && policyHash === pick(manifest, hashKeys) && (!snapshot.policyHash || snapshot.policyHash === policyHash);
 };
 const readCandidate = (file: string | null, forcedManifest: string | null = null) => {
   const value = json(file);

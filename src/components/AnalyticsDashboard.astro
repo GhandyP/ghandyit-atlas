@@ -11,7 +11,9 @@
     import { normalizeAssetType } from '../data/analytics/classifications';
     import { ondoAnalytics } from '../data/ondoAnalytics';
   const { groups, activeDimension, dimensionOptions, mode, quality } = Astro.props;
-    const isCatalogFallback = mode === 'catalog-fallback';
+    const isCatalogFallback = mode === 'catalog-fallback' || mode === 'catalog';
+    const isCatalogOnly = mode === 'catalog';
+    const catalogBadge = isCatalogOnly ? 'Catálogo versionado' : 'Fallback de catálogo';
     const unknownGroup = groups.find((group) => group.key === 'unknown');
     const qualityReason = String(quality.reason ?? 'analytics-unavailable');
     const qualityState = String(quality.state ?? 'unknown');
@@ -37,11 +39,11 @@
               <p class="eyebrow">Analítica no disponible</p>
               <h3 id="analytics-unavailable-title">Este build solo publica el catálogo</h3>
             </div>
-            <span class="analytics-unavailable__badge">Fallback de catálogo</span>
+            <span class="analytics-unavailable__badge">{catalogBadge}</span>
           </div>
           <p class="analytics-unavailable__copy">Los análisis por cohortes, las métricas de proveedores y los puntajes están desactivados porque la identidad de los activos, la fuente de datos y la evidencia de licencia todavía no están verificadas.</p>
           <p class="analytics-unavailable__copy">Los valores <strong>N/D</strong> no son resultados analíticos. Explorá las filas, la calidad de la fuente y la evidencia disponible en el catálogo.</p>
-          <p class="analytics-unavailable__meta">Estado: <code>{qualityReason}</code> · Snapshot: <code>{ondoAnalytics.snapshotId}</code> · As-of: <strong>unknown</strong>.</p>
+          <p class="analytics-unavailable__meta">Estado: <code>{qualityReason}</code> · Snapshot: <code>{ondoAnalytics.snapshotId}</code> · Generado: {ondoAnalytics.generatedAt ?? 'N/D'} · As-of: <strong>unknown</strong>.</p>
           <a class="analytics-unavailable__link" href="#catalog-quality-title">Ir a calidad y evidencia del catálogo</a>
         </div>
       ) : (

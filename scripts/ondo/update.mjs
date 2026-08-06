@@ -33,14 +33,21 @@ export function validatePointer(pointer, label = 'pointer', root = process.cwd()
   return pointer;
 }
 
-const assetId = (asset) => asset?.canonicalId ?? asset?.canonicalKey ?? asset?.assetId ?? asset?.identity?.stableId ?? asset?.identity?.normalizedAddress ?? null;
+const assetId = (asset) => asset?.rawRowKey ?? asset?.canonicalId ?? asset?.canonicalKey ?? asset?.assetId ?? asset?.identity?.stableId ?? asset?.identity?.normalizedAddress ?? null;
 const validateAssets = (assets) => {
   const ids = assets.map(assetId);
   return ids.every((id) => typeof id === 'string' && id.trim()) && new Set(ids.map((id) => id.toLowerCase())).size === ids.length;
 };
 export function validateCandidate(candidate, root = process.cwd()) {
   const config = candidate?.scoreConfig;
-  if (!candidate || candidate.mode !== 'enriched' || !Number.isInteger(candidate.schemaVersion) || typeof candidate.snapshotId !== 'string' || !candidate.snapshotId || !Array.isArray(candidate.assets) || !validateAssets(candidate.assets) || !Array.isArray(candidate.sources) || candidate.sources.length === 0 || !config || config.minimumWeightCoverage !== 0.7 || config.minimumValidFactors !== 4 || config.factors?.length !== 6) throw new Error('candidate-invalid');
+  const base = candidate && Number.isInteger(candidate.schemaVersion) && typeof candidate.snapshotId === 'string' && candidate.snapshotId && Array.isArray(candidate.assets) && validateAssets(candidate.assets) && Array.isArray(candidate.sources);
+  if (!base) throw new Error('candidate-invalid');
+  if (candidate.mode === 'catalog') {
+    const policyHash = candidate?.policyHash;
+    if (candidate.sources.length !== 0 || typeof policyHash !== 'string' || !/^[a-f\d]{64}$/i.test(policyHash) || typeof candidate.generatedAt !== 'string' || typeof candidate.quality !== 'object' || candidate.quality === null) throw new Error('candidate-invalid');
+    return candidate;
+  }
+  if (candidate.mode !== 'enriched' || candidate.sources.length === 0 || !config || config.minimumWeightCoverage !== 0.7 || config.minimumValidFactors !== 4 || config.factors?.length !== 6) throw new Error('candidate-invalid');
   try {
     const sources = candidate.sources.map((source) => { const approved = getVerifiedSource(source?.sourceId, root); if (JSON.stringify(approved) !== JSON.stringify(source)) throw new Error(); return approved; });
     if (new Set(sources.map((source) => source.sourceId)).size !== sources.length) throw new Error();

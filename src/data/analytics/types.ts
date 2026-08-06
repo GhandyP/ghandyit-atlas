@@ -46,4 +46,4 @@ export interface SourceRecord {
   licensing: { redistributionPermission: string; staticArtifactPermission: string };
   verification: { fixtureReplayable: boolean; blockers: string[] };
 }
-export interface AnalyticsSnapshot { schemaVersion: number; snapshotId: string; generatedAt: string | null; catalogSnapshotAt: string | null; mode: 'enriched' | 'catalog-fallback'; sources: SourceRecord[]; quality: Record<string, unknown>; assets: unknown[] }
+export interface AnalyticsSnapshot { schemaVersion: number; snapshotId: string; generatedAt: string | null; catalogSnapshotAt: string | null; mode: 'enriched' | 'catalog' | 'catalog-fallback'; sources: SourceRecord[]; quality: Record<string, unknown>; assets: unknown[] }
